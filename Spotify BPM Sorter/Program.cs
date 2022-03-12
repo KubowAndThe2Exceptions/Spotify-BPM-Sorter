@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 
 namespace Spotify_BPM_Sorter
 {
@@ -6,7 +7,8 @@ namespace Spotify_BPM_Sorter
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            DbClass db = new DbClass();
+            db.TestConnection();
         }
     }
 }
