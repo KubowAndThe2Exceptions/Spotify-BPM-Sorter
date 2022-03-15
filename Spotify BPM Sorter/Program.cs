@@ -12,9 +12,12 @@ namespace Spotify_BPM_Sorter
         static async Task Main(string[] args)
         {
             DbClass db = new DbClass();
-            db.TestConnection();
-            
-            
+
+            var services = new ServiceCollection();
+            services.AddHttpClient<SpotifyClient>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            var spotify = serviceProvider.GetRequiredService<SpotifyClient>();
         }
     }
 }
