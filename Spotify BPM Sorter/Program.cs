@@ -75,12 +75,10 @@ namespace Spotify_BPM_Sorter
             while (calledSongs <= totalSongs)
             {
                 var playlist = await spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { Offset = offset });
+
                 var count = (int)playlist.Items.Count;
-                Console.WriteLine("count called = {0}", count);
                 calledSongs += count;
-                Console.WriteLine("Offset = {0}", offset);
                 offset += count - 1;
-                Console.WriteLine("called songs = {0}", calledSongs);
             }
 
             //var playlist = await spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { });
