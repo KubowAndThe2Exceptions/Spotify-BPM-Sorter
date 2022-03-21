@@ -18,5 +18,10 @@ namespace Spotify_BPM_Sorter
             TrackId = trackId;
             Loudness = loudness;
         }
+        public DbTrack(string name, string trackId)
+        {
+            Name = name;
+            TrackId = trackId;
+        }
     }
 }

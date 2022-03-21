@@ -24,5 +24,9 @@ namespace Spotify_BPM_Sorter
                 Console.WriteLine("Connection is open");
             }
         }
+
+        //public DbTrack GetTrack() {}
+        //public void InsertTrack(DbTrack track) {}
+        //public void InsertTrackList(List<DbTrack> tracklist) {}
     }
 }

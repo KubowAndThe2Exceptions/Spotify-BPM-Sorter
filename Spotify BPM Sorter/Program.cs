@@ -17,7 +17,8 @@ namespace Spotify_BPM_Sorter
         public static string ClientId = string.Empty;
         public static string Secret = string.Empty;
         public static string TargetPlaylist = string.Empty;
-        public static DbClass db = new DbClass();
+        public static DbClass Db = new DbClass();
+        public static List<DbTrack> TrackList = new List<DbTrack>();
 
         static async Task Main(string[] args)
         {
@@ -74,8 +75,22 @@ namespace Spotify_BPM_Sorter
             int offset = 0;
             while (calledSongs <= totalSongs)
             {
+                var list = new List<DbTrack>();
                 var playlist = await spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { Offset = offset });
-
+                foreach (var item in playlist.Items)
+                {
+                    if (item.Track is FullTrack fullTrack)
+                    {
+                        DbTrack track = new DbTrack(fullTrack.Name, fullTrack.Id);
+                        list.Add(track);
+                    }
+                }
+                
+                //call analysis based on list to complete creation of DbTracks
+                foreach (var track in list)
+                {
+                    var trackId = track.TrackId;
+                }
                 var count = (int)playlist.Items.Count;
                 calledSongs += count;
                 offset += count - 1;
