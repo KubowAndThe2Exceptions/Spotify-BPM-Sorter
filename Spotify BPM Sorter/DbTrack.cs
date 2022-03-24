@@ -10,13 +10,13 @@ namespace Spotify_BPM_Sorter
     {
         public string Name { get; set; }
         public string TrackId { get; set; }
-        public float Loudness { get; set; }
+        public float Tempo { get; set; }
 
-        public DbTrack(string name, string trackId, float loudness)
+        public DbTrack(string name, string trackId, float tempo)
         {
             Name = name;
             TrackId = trackId;
-            Loudness = loudness;
+            Tempo = tempo;
         }
         public DbTrack(string name, string trackId)
         {

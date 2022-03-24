@@ -85,16 +85,14 @@ namespace Spotify_BPM_Sorter
                         list.Add(track);
                     }
                 }
-                
-                //call analysis based on list to complete creation of DbTracks
-                foreach (var track in list)
-                {
-                    var trackId = track.TrackId;
-                }
+
+                TrackList.AddRange(list);
                 var count = (int)playlist.Items.Count;
                 calledSongs += count;
                 offset += count - 1;
             }
+                
+                //call analysis based on list to complete creation of DbTracks
 
             //var playlist = await spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { });
             //foreach (var item in playlist.Items)
