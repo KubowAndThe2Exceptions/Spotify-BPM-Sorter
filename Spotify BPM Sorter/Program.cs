@@ -19,6 +19,7 @@ namespace Spotify_BPM_Sorter
         public static string TargetPlaylist = string.Empty;
         public static DbClass Db = new DbClass();
         public static List<DbTrack> TrackList = new List<DbTrack>();
+        public static List<DbTrack> TempoProblemList = new List<DbTrack>();
 
         static async Task Main(string[] args)
         {
@@ -93,10 +94,10 @@ namespace Spotify_BPM_Sorter
                 offset += count - 1;
             }
 
-            totalSongs = TrackList.Count - 1;
+            totalSongs = TrackList.Count;
             calledSongs = 0;
 
-            while (calledSongs <= totalSongs)
+            while (calledSongs < totalSongs)
             {
                 //Gets number of songs left to call, only allows <= 100 ids through
                 var difference = totalSongs - calledSongs;
@@ -127,6 +128,19 @@ namespace Spotify_BPM_Sorter
                 }
                 calledSongs += amountToCall;
             }
+            
+            TempoProblemList = TrackList.FindAll(t => t.Tempo == 0);
+            foreach (var Problem in TempoProblemList)
+            {
+                int index = TrackList.FindIndex(t => t == Problem);
+                TrackList.RemoveAt(index);
+            }
+
+            TrackList.Sort((x, y) => x.Tempo.CompareTo(y.Tempo));
+
+            Console.WriteLine("low tempo: {0}", TrackList[0].Tempo);
+            Console.WriteLine("high tempo: {0}", TrackList[TrackList.Count - 1].Tempo);
+            Console.WriteLine("problem tempos: {0}", TempoProblemList.Count);
         }
 
         private static async Task OnErrorReceived(object sender, string error, string state)
