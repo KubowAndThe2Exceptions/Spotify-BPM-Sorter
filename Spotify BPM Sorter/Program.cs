@@ -23,14 +23,17 @@ namespace Spotify_BPM_Sorter
 
         static async Task Main(string[] args)
         {
+            //Env variables crossed over
             DotNetEnv.Env.Load(@"C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\.env");
             ClientId = DotNetEnv.Env.GetString("CLIENT_ID");
             Secret = DotNetEnv.Env.GetString("CLIENT_SECRET");
             TargetPlaylist = DotNetEnv.Env.GetString("TARGET_PLAYLIST");
 
+            //Creates new embedded server
             _server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
             await _server.Start();
 
+            //Calls Either task depending on response
             _server.AuthorizationCodeReceived += OnAuthorizationCodeReceived;
             _server.ErrorReceived += OnErrorReceived;
 
@@ -58,11 +61,7 @@ namespace Spotify_BPM_Sorter
                 ClientId, Secret, response.Code, new Uri("http://localhost:5000/callback")
               )
             );
-            //NOTE FOR LATER: 
-            //First, call playlist, only the total num of tracks
-            //while called tracks < total num of tracks:
-            //  Call tracks, place name/id in list (new class/task to handle this procedure, and new class for representing)
-            //  if called tracks are sub maximum, call with offset, add offset to total called
+            
             var spotify = new SpotifyClient(tokenResponse.AccessToken);
             
             //new playlistrequest only asking for the total num of songs
@@ -71,6 +70,8 @@ namespace Spotify_BPM_Sorter
 
             //calls playlist and extracts total num of songs
             var playlistTotalSongData = await spotify.Playlists.GetItems(TargetPlaylist, playlistGIR);
+            
+            //Extracts Name and Id of each song in increments of 50 and stores data in DbTrack objects
             int totalSongs = (int)playlistTotalSongData.Total;
             int calledSongs = 0;
             int offset = 0;
@@ -86,12 +87,12 @@ namespace Spotify_BPM_Sorter
                         list.Add(track);
                     }
                 }
-
+                //Adds tracks to TrackList
                 TrackList.AddRange(list);
-                //NOTE: clean up these variables
+
                 var count = (int)playlist.Items.Count;
                 calledSongs += count;
-                offset += count - 1;
+                offset = calledSongs - 1;
             }
 
             totalSongs = TrackList.Count;
@@ -141,6 +142,17 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("low tempo: {0}", TrackList[0].Tempo);
             Console.WriteLine("high tempo: {0}", TrackList[TrackList.Count - 1].Tempo);
             Console.WriteLine("problem tempos: {0}", TempoProblemList.Count);
+            //60-106 slow
+            //low-slow 60-83
+            //high-slow 84-106
+            
+            //medium 107-152
+            //low-medium 107-129
+            //high-medium 130-152
+            
+            //fast 153-198
+            //low-fast 153-175
+            //high-fast 176-199
         }
 
         private static async Task OnErrorReceived(object sender, string error, string state)
