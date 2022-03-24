@@ -87,21 +87,46 @@ namespace Spotify_BPM_Sorter
                 }
 
                 TrackList.AddRange(list);
+                //NOTE: clean up these variables
                 var count = (int)playlist.Items.Count;
                 calledSongs += count;
                 offset += count - 1;
             }
-                
-                //call analysis based on list to complete creation of DbTracks
 
-            //var playlist = await spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { });
-            //foreach (var item in playlist.Items)
-            //{
-            //    if (item.Track is FullTrack track)
-            //    {
-            //        Console.WriteLine(track.Name);
-            //    }
-            //}
+            totalSongs = TrackList.Count - 1;
+            calledSongs = 0;
+
+            while (calledSongs <= totalSongs)
+            {
+                //Gets number of songs left to call, only allows <= 100 ids through
+                var difference = totalSongs - calledSongs;
+                var amountToCall = 0;
+                if (difference > 100)
+                {
+                    amountToCall = 100;
+                }
+                else
+                {
+                    amountToCall = difference;
+                }
+                
+                //Adds <= 100 track ids into a list of strings
+                List<string> extractedStrings = new List<string>();
+                List<DbTrack> listToExtract = TrackList.GetRange(calledSongs, amountToCall);
+                foreach (var track in listToExtract)
+                {
+                    extractedStrings.Add(track.TrackId);
+                }
+                
+                //Calls list of track ids, seeks and replaces each individual track with proper tempo field
+                var trackFeatures = await spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
+                foreach (var track in trackFeatures.AudioFeatures)
+                {
+                    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
+                    TrackList[index].Tempo = track.Tempo;
+                }
+                calledSongs += amountToCall;
+            }
         }
 
         private static async Task OnErrorReceived(object sender, string error, string state)

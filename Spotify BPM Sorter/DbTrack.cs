@@ -23,5 +23,9 @@ namespace Spotify_BPM_Sorter
             Name = name;
             TrackId = trackId;
         }
+        public DbTrack(string trackId)
+        {
+            TrackId = trackId;
+        }
     }
 }
