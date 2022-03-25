@@ -147,7 +147,42 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("high tempo: {0}", TrackList[TrackList.Count - 1].Tempo);
             Console.WriteLine("problem tempos: {0}", TempoProblemList.Count);
 
-
+            foreach (var track in TrackList)
+            {
+                if (track.Tempo < 107)
+                {
+                    if (track.Tempo < 84)
+                    {
+                        LowTempos.LowerTempo.Add(track);
+                    }
+                    else
+                    {
+                        LowTempos.HigherTempo.Add(track);
+                    }
+                } 
+                else if (track.Tempo < 153)
+                {
+                    if (track.Tempo < 130)
+                    {
+                        MidTempos.LowerTempo.Add(track);
+                    }
+                    else
+                    {
+                        MidTempos.HigherTempo.Add(track);
+                    }
+                }
+                else
+                {
+                    if (track.Tempo < 176)
+                    {
+                        HighTempos.LowerTempo.Add(track);
+                    }
+                    else
+                    {
+                        HighTempos.HigherTempo.Add(track);
+                    }
+                }
+            }
             //60-106 slow
             //low-slow 60-83
             //high-slow 84-106
