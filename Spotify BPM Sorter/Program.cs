@@ -131,9 +131,9 @@ namespace Spotify_BPM_Sorter
             }
             
             TempoProblemList = TrackList.FindAll(t => t.Tempo == 0);
-            foreach (var Problem in TempoProblemList)
+            foreach (var problem in TempoProblemList)
             {
-                int index = TrackList.FindIndex(t => t == Problem);
+                int index = TrackList.FindIndex(t => t == problem);
                 TrackList.RemoveAt(index);
             }
 
