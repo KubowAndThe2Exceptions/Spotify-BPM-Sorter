@@ -20,6 +20,10 @@ namespace Spotify_BPM_Sorter
         public static DbClass Db = new DbClass();
         public static List<DbTrack> TrackList = new List<DbTrack>();
         public static List<DbTrack> TempoProblemList = new List<DbTrack>();
+        public static TempoRange LowTempos = new TempoRange();
+        public static TempoRange MidTempos = new TempoRange();
+        public static TempoRange HighTempos = new TempoRange();
+        
 
         static async Task Main(string[] args)
         {
@@ -142,6 +146,8 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("low tempo: {0}", TrackList[0].Tempo);
             Console.WriteLine("high tempo: {0}", TrackList[TrackList.Count - 1].Tempo);
             Console.WriteLine("problem tempos: {0}", TempoProblemList.Count);
+
+
             //60-106 slow
             //low-slow 60-83
             //high-slow 84-106
