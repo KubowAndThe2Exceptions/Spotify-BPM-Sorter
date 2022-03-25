@@ -183,6 +183,9 @@ namespace Spotify_BPM_Sorter
                     }
                 }
             }
+            Console.WriteLine("Low Tempo: {0}, Lower-range: {1}, Higher-range {2}", LowTempos.Total(), LowTempos.LowerTempo.Count, LowTempos.HigherTempo.Count);
+            Console.WriteLine("Mid Tempo: {0} Lower-range: {1}, Higher-range {2}", MidTempos.Total(), MidTempos.LowerTempo.Count, MidTempos.HigherTempo.Count);
+            Console.WriteLine("High Tempo: {0} Lower-range: {1}, Higher-range {2}", HighTempos.Total(), HighTempos.LowerTempo.Count, HighTempos.HigherTempo.Count);
             //60-106 slow
             //low-slow 60-83
             //high-slow 84-106

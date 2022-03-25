@@ -13,7 +13,12 @@ namespace Spotify_BPM_Sorter
 
         public TempoRange()
         {
+        }
 
+        public int Total()
+        {
+            var total = LowerTempo.Count + HigherTempo.Count;
+            return total;
         }
     }
 }
