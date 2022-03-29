@@ -8,6 +8,7 @@ namespace Spotify_BPM_Sorter
 {
     class TempoRange
     {
+        public static List<Tempo> AllTempos = new List<Tempo>();
         public Tempo LowerTempo;
         public Tempo HigherTempo;
 
@@ -15,6 +16,9 @@ namespace Spotify_BPM_Sorter
         {
             LowerTempo = lowerTempo;
             HigherTempo = higherTempo;
+            AllTempos.Add(lowerTempo);
+            AllTempos.Add(higherTempo);
+            //add sorting in future
         }
 
         public int Total()
