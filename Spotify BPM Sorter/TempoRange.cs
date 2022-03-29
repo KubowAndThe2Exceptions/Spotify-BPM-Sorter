@@ -8,16 +8,18 @@ namespace Spotify_BPM_Sorter
 {
     class TempoRange
     {
-        public List<DbTrack> LowerTempo = new List<DbTrack>();
-        public List<DbTrack> HigherTempo = new List<DbTrack>();
+        public Tempo LowerTempo;
+        public Tempo HigherTempo;
 
-        public TempoRange()
+        public TempoRange(Tempo lowerTempo, Tempo higherTempo)
         {
+            LowerTempo = lowerTempo;
+            HigherTempo = higherTempo;
         }
 
         public int Total()
         {
-            var total = LowerTempo.Count + HigherTempo.Count;
+            var total = LowerTempo.Tracklist.Count + HigherTempo.Tracklist.Count;
             return total;
         }
     }
