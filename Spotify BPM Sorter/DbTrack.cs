@@ -48,5 +48,11 @@ namespace Spotify_BPM_Sorter
         {
             TrackId = trackId;
         }
+
+        public void Display()
+        {
+            var artists = string.Join(", ", this.Artists);
+            Console.WriteLine("Name: {0} | Tempo: {1} | Artist(s): {2} | Album: {3}", this.Name, this.Tempo, artists, this.AlbumName);
+        }
     }
 }

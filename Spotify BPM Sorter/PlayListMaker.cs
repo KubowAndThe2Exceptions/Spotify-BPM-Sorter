@@ -258,9 +258,31 @@ namespace Spotify_BPM_Sorter
                 }
             }
 
-            var genPlaylist = await Spotify.Playlists.Create(CurrentUserId, new PlaylistCreateRequest(DateTime.Today.Date.ToString("d") + " GPlaylist"));
-            await AddGeneratedSongs(genPlaylist.Id);
-            Console.WriteLine("Finished Generating");
+            await DisplayGenListAsync();
+        }
+        private async Task DisplayGenListAsync()
+        {
+            foreach (var track in GeneratedList)
+            {
+                track.Display();
+            }
+            Console.WriteLine("Does this look okay? (y/n)");
+            var answer = Console.ReadKey();
+            if (answer.Key == ConsoleKey.Y)
+            {
+                var genPlaylist = await Spotify.Playlists.Create(CurrentUserId, new PlaylistCreateRequest(DateTime.Today.Date.ToString("d") + " GPlaylist"));
+                await AddGeneratedSongs(genPlaylist.Id);
+                Console.WriteLine("Finished Generating");
+            }
+            else
+            {
+                Console.WriteLine("My bad! Do you want me to try again?");
+                answer = Console.ReadKey();
+                if (answer.Key == ConsoleKey.Y)
+                {
+                    await GenerateSpotifyPlaylistAsync();
+                }
+            }
         }
         private async Task AddGeneratedSongs(string playlistId)
         {
