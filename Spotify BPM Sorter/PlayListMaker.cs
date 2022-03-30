@@ -77,7 +77,8 @@ namespace Spotify_BPM_Sorter
                 {
                     if (item.Track is FullTrack fullTrack)
                     {
-                        DbTrack track = new DbTrack(fullTrack.Name, fullTrack.Id, fullTrack.Uri);
+                        DbTrack track = new DbTrack(fullTrack.Name, fullTrack.Id, fullTrack.Uri, 
+                            fullTrack.DurationMs, fullTrack.Artists, fullTrack.Album.Name);
                         list.Add(track);
                     }
                 }
