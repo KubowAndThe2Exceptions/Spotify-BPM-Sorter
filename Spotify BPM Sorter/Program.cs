@@ -16,7 +16,7 @@ namespace Spotify_BPM_Sorter
         private static EmbedIOAuthServer _server;
         public static string ClientId = string.Empty;
         public static string Secret = string.Empty;
-        public static DbClass Db = new DbClass();
+        public static DbCon Db = new DbCon();
         public static List<DbTrack> TrackList = new List<DbTrack>();
         public static List<DbTrack> TempoProblemList = new List<DbTrack>();
         public static PlayListMaker PlaylistMaker;

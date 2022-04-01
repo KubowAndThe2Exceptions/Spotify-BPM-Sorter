@@ -14,7 +14,7 @@ namespace Spotify_BPM_Sorter
         public string Uri { get; set; }
         public float Tempo { get; set; }
         public int DurationMs { get; set; }
-        public List<SimpleArtist> Artists {get; set; }
+        public string Artists {get; set; }
         public string AlbumName { get; set; }
 
         public DbTrack(string name, string trackId, string uri, int durationMs, List<SimpleArtist> artists, string albumName)
@@ -23,7 +23,7 @@ namespace Spotify_BPM_Sorter
             TrackId = trackId;
             Uri = uri;
             DurationMs = durationMs;
-            Artists = artists;
+            Artists = string.Join(", ", artists);
             AlbumName = albumName;
         }
         public DbTrack(string name, string trackId, float tempo)
@@ -51,8 +51,7 @@ namespace Spotify_BPM_Sorter
 
         public void Display()
         {
-            var artists = string.Join(", ", this.Artists);
-            Console.WriteLine("Name: {0} | Tempo: {1} | Artist(s): {2} | Album: {3}", this.Name, this.Tempo, artists, this.AlbumName);
+            Console.WriteLine("Name: {0} | Tempo: {1} | Artist(s): {2} | Album: {3}", this.Name, this.Tempo, this.Artists, this.AlbumName);
         }
     }
 }

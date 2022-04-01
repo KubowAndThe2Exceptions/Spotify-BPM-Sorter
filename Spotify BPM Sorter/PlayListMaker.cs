@@ -19,6 +19,8 @@ namespace Spotify_BPM_Sorter
         public List<DbTrack> GeneratedList { get; set; } = new List<DbTrack>();
         public List<DbTrack> TempoProblems { get; set; } = new List<DbTrack>();
         public SpotifyClient Spotify { get; set; }
+        
+        public DbCon DataBaseContext = new DbCon();
 
         public static async Task<PlayListMaker> CreateAsync(SpotifyClient spotify)
         {
@@ -127,8 +129,21 @@ namespace Spotify_BPM_Sorter
                 var trackFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
                 foreach (var track in trackFeatures.AudioFeatures)
                 {
+                    //if (DataBaseContext.Exists(track))
+                    //{
+                    //    var tempo = DataBaseContext.GetTempo(track);
+                    //    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
+                    //    TrackList[index].Tempo = tempo;
+                    //}
+                    //else
+                    //{
+                    //    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
+                    //    TrackList[index].Tempo = track.Tempo;
+                    //    DataBaseContext.StoreTrack(TrackList[index]);
+                    //}
                     int index = TrackList.FindIndex(t => t.TrackId == track.Id);
                     TrackList[index].Tempo = track.Tempo;
+                    DataBaseContext.StoreTrack(TrackList[index]);
                 }
                 calledSongs += amountToCall;
             }
