@@ -19,6 +19,7 @@ namespace Spotify_BPM_Sorter
         public static DbClass Db = new DbClass();
         public static List<DbTrack> TrackList = new List<DbTrack>();
         public static List<DbTrack> TempoProblemList = new List<DbTrack>();
+        public static PlayListMaker PlaylistMaker;
         
 
         static async Task Main(string[] args)
@@ -29,6 +30,25 @@ namespace Spotify_BPM_Sorter
             Secret = DotNetEnv.Env.GetString("CLIENT_SECRET");
 
 
+            await Start();
+
+            //var key = Console.ReadKey();
+            //if (key.Key == ConsoleKey.Y)
+            //{
+            //    await PlaylistMaker.GenerateSpotifyPlaylistAsync();
+            //    Console.ReadLine();
+            //}
+            var key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Y)
+            {
+                await PlaylistMaker.GenerateSpotifyPlaylistAsync();
+                Console.ReadLine();
+            }
+            Console.ReadKey();            
+        }
+
+        private static async Task Start()
+        {
             //Creates new embedded server
             _server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
             await _server.Start();
@@ -49,12 +69,13 @@ namespace Spotify_BPM_Sorter
             };
 
             BrowserUtil.Open(request.ToUri());
-            Console.ReadKey();
         }
+
 
         private static async Task OnAuthorizationCodeReceived(object sender, AuthorizationCodeResponse response)
         {
             await _server.Stop();
+            Console.WriteLine("Authorized. . .");
             var config = SpotifyClientConfig.CreateDefault();
             var tokenResponse = await new OAuthClient(config).RequestToken(
               new AuthorizationCodeTokenRequest(
@@ -73,18 +94,23 @@ namespace Spotify_BPM_Sorter
             //    Console.WriteLine(e.Message);
             //    Console.WriteLine(e.Response?.StatusCode);
             //}
-
-            var playListMaker = await PlayListMaker.CreateAsync(spotify);
-            await playListMaker.FillSpotifyTemposAsync();
-
-            Console.WriteLine("Generate a new playlist?");
-            var inputKey = await Task.Run(() => Console.ReadKey());
-            if (inputKey.Key == ConsoleKey.Y)
-            {
-                await playListMaker.GenerateSpotifyPlaylistAsync();
-            }
-
+            PlaylistMaker = await PlayListMaker.CreateAsync(spotify);
+            Console.WriteLine("PlaylistMaker Initialized");
+            await PlaylistMaker.FillSpotifyTemposAsync();
+            await Task.Run(() => Console.WriteLine("Generate?"));
+            //key = await DetectKey();
+            //if (key.Key == ConsoleKey.Y)
+            //{
+            //    await PlaylistMaker.GenerateSpotifyPlaylistAsync();
+            //}
         }
+
+        private static async Task<ConsoleKeyInfo> DetectKey()
+        {
+            var key = await Task.Run(() => Console.ReadKey(true));
+            return key;
+        }
+
 
         private static async Task OnErrorReceived(object sender, string error, string state)
         {

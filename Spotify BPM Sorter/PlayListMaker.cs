@@ -90,6 +90,7 @@ namespace Spotify_BPM_Sorter
                 calledSongs += count;
                 offset = calledSongs - 1;
             }
+            Console.WriteLine("Track List Filled. . .");
             await AddTrackAnalysisInfoAsync();
             DetectTempoProblems();
             SortTempos();
@@ -131,6 +132,7 @@ namespace Spotify_BPM_Sorter
                 }
                 calledSongs += amountToCall;
             }
+            Console.WriteLine("Track Analysis Finished, Tempos Acquired.");
         }
 
         private void DetectTempoProblems()
@@ -143,6 +145,7 @@ namespace Spotify_BPM_Sorter
             }
 
             TrackList.Sort((x, y) => x.Tempo.CompareTo(y.Tempo));
+            Console.WriteLine("Tempo Problems Detected");
         }
         
         private void SortTempos()
@@ -183,6 +186,7 @@ namespace Spotify_BPM_Sorter
                     }
                 }
             }
+            Console.WriteLine("Tempos Internally Sorted");
         }
 
         public async Task GenerateSpotifyPlaylistAsync()
@@ -385,6 +389,7 @@ namespace Spotify_BPM_Sorter
                     calledSongs += amountToCall;
                 }
             }
+            Console.WriteLine("All Spotify Tempo Playlists Wiped");
         }
 
         public async Task FillSpotifyTemposAsync()
@@ -423,7 +428,19 @@ namespace Spotify_BPM_Sorter
                     calledSongs += amountToCall;
                 }
             }
-        } 
+            Console.WriteLine("Spotify Tempo Playlists Filled");
+        }
+        
+        public async Task GenPrompt()
+        {
+            Console.WriteLine("Generate?");
+            var key = Console.ReadKey();
+            if (key.Key == ConsoleKey.Y)
+            {
+                await GenerateSpotifyPlaylistAsync();
+                Console.ReadLine();
+            }
+        }
 
     }
 }
