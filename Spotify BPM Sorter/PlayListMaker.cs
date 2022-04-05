@@ -129,21 +129,24 @@ namespace Spotify_BPM_Sorter
                 var trackFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
                 foreach (var track in trackFeatures.AudioFeatures)
                 {
-                    //if (DataBaseContext.Exists(track))
-                    //{
-                    //    var tempo = DataBaseContext.GetTempo(track);
-                    //    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
-                    //    TrackList[index].Tempo = tempo;
-                    //}
-                    //else
-                    //{
-                    //    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
-                    //    TrackList[index].Tempo = track.Tempo;
-                    //    DataBaseContext.StoreTrack(TrackList[index]);
-                    //}
-                    int index = TrackList.FindIndex(t => t.TrackId == track.Id);
-                    TrackList[index].Tempo = track.Tempo;
-                    DataBaseContext.StoreTrack(TrackList[index]);
+                    int index;
+                    if (DataBaseContext.Exists(track.Id))
+                    {
+                        var tempo = DataBaseContext.GetTempo(track.Id);
+                        if (tempo == 0 && track.Tempo >= 0)
+                        {
+                            tempo = track.Tempo;
+                            DataBaseContext.SetTempo(track.Tempo, track.Id);
+                        }
+                        index = TrackList.FindIndex(t => t.TrackId == track.Id);
+                        TrackList[index].Tempo = tempo;
+                    }
+                    else
+                    {
+                        index = TrackList.FindIndex(t => t.TrackId == track.Id);
+                        TrackList[index].Tempo = track.Tempo;
+                        DataBaseContext.StoreTrack(TrackList[index]);
+                    }
                 }
                 calledSongs += amountToCall;
             }

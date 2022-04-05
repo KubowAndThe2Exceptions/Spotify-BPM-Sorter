@@ -59,14 +59,68 @@ namespace Spotify_BPM_Sorter
         {
 
         }
-        public void Exists(DbTrack track)
+        public bool Exists(string id)
         {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                bool boolean = false;
+                connection.Open();
+                //string sqlstring = "SELECT * FROM SpotifyTrack WHERE TrackId='@TrackId';";
+                string sqlstring = "SELECT * FROM SpotifyTrack WHERE TrackId=@TrackId;";
+                SqlCommand cmd = new SqlCommand(sqlstring, connection);
+                cmd.Parameters.Add("@TrackId", System.Data.SqlDbType.NVarChar).Value = id;
 
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.HasRows)
+                    {
+                        boolean = true;
+                    }
+                }
+                reader.Close();
+                connection.Close();
+
+                return boolean;
+            }
         }
-        //public bool GetTempo(DbTrack track)
-        //{
+        public void SetTempo(float tempo, string id)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                string sqlstring = "UPDATE SpotifyTrack SET Tempo=@Tempo WHERE TrackId=@TrackId;";
+                SqlCommand cmd = new SqlCommand(sqlstring, connection);
+                cmd.Parameters.Add("@Tempo", System.Data.SqlDbType.Float).Value = tempo;
+                cmd.Parameters.Add("@TrackId", System.Data.SqlDbType.NVarChar).Value = id;
 
-        //}
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        public float GetTempo(string id)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                float tempo = 0;
+                connection.Open();
+                string sqlstring = "SELECT Tempo FROM SpotifyTrack WHERE TrackId=@TrackId";
+                SqlCommand cmd = new SqlCommand(sqlstring, connection);
+                cmd.Parameters.Add("@TrackId", System.Data.SqlDbType.NVarChar).Value = id;
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Console.WriteLine(reader[0].ToString());
+                    tempo = (float)reader.GetDouble(0);
+                }
+                reader.Close();
+                connection.Close();
+                
+                return tempo;
+
+            }
+        }
         public void GetAllTracks()
         {
 
