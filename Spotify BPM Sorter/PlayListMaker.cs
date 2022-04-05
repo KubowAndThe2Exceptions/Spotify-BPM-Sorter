@@ -133,18 +133,21 @@ namespace Spotify_BPM_Sorter
                     if (DataBaseContext.Exists(track.Id))
                     {
                         var tempo = DataBaseContext.GetTempo(track.Id);
-                        if (tempo == 0 && track.Tempo >= 0)
+                        if (tempo == 0 && track.Tempo > 0)
                         {
                             tempo = track.Tempo;
                             DataBaseContext.SetTempo(track.Tempo, track.Id);
                         }
                         index = TrackList.FindIndex(t => t.TrackId == track.Id);
                         TrackList[index].Tempo = tempo;
+                        DataBaseContext.FixArtists(TrackList[index].Artists, track.Id);
                     }
                     else
                     {
                         index = TrackList.FindIndex(t => t.TrackId == track.Id);
                         TrackList[index].Tempo = track.Tempo;
+                        Console.WriteLine("New Track Added!");
+                        TrackList[index].Display();
                         DataBaseContext.StoreTrack(TrackList[index]);
                     }
                 }
@@ -205,6 +208,12 @@ namespace Spotify_BPM_Sorter
                 }
             }
             Console.WriteLine("Tempos Internally Sorted");
+            Console.WriteLine("Number of LL: {0}", LowRange.LowerTempo.Tracklist.Count);
+            Console.WriteLine("Number of LH: {0}", LowRange.HigherTempo.Tracklist.Count);
+            Console.WriteLine("Number of ML: {0}", MidRange.LowerTempo.Tracklist.Count);
+            Console.WriteLine("Number of MH: {0}", MidRange.HigherTempo.Tracklist.Count);
+            Console.WriteLine("Number of HL: {0}", HighRange.LowerTempo.Tracklist.Count);
+            Console.WriteLine("Number of HH: {0}", HighRange.HigherTempo.Tracklist.Count);
         }
 
         public async Task GenerateSpotifyPlaylistAsync()

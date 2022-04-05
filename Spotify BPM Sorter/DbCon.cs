@@ -59,6 +59,20 @@ namespace Spotify_BPM_Sorter
         {
 
         }
+        public void FixArtists(string artists, string id)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                string sqlstring = "UPDATE SpotifyTrack SET Artists=@Artists WHERE TrackId=@TrackId;";
+                SqlCommand cmd = new SqlCommand(sqlstring, connection);
+                cmd.Parameters.Add("@Artists", System.Data.SqlDbType.NVarChar).Value = artists;
+                cmd.Parameters.Add("@TrackId", System.Data.SqlDbType.NVarChar).Value = id;
+
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
         public bool Exists(string id)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))

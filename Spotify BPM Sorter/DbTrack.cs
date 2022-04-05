@@ -19,12 +19,25 @@ namespace Spotify_BPM_Sorter
 
         public DbTrack(string name, string trackId, string uri, int durationMs, List<SimpleArtist> artists, string albumName)
         {
+            List<string> artistlist = new List<string>();
+            foreach (var artist in artists)
+            {
+                artistlist.Add(artist.Name);
+            }
+
             Name = name;
             TrackId = trackId;
             Uri = uri;
             DurationMs = durationMs;
-            Artists = string.Join(", ", artists);
             AlbumName = albumName;
+            if (artistlist.Count > 1)
+            {
+                Artists = string.Join(", ", artistlist);
+            }
+            else
+            {
+                Artists = artistlist[0];
+            }
         }
         public DbTrack(string name, string trackId, float tempo)
         {
