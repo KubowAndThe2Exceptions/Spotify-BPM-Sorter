@@ -15,6 +15,7 @@ namespace Spotify_BPM_Sorter
         public Tempo LowTempoList { get; set; }
         public Tempo MidTempoList { get; set; }
         public Tempo HighTempoList { get; set; }
+        private static Generator Gen { get; set; }
         public List<DbTrack> TrackList { get; set; } = new List<DbTrack>();
         public List<DbTrack> GeneratedList { get; set; } = new List<DbTrack>();
         public List<DbTrack> TempoProblems { get; set; } = new List<DbTrack>();
@@ -195,53 +196,14 @@ namespace Spotify_BPM_Sorter
             }
             Console.WriteLine("Tempos Internally Sorted");
             Console.WriteLine("Number of L: {0}", LowTempoList.Tracklist.Count);
-            Console.WriteLine("Number of ML: {0}", MidTempoList.Tracklist.Count);
-            Console.WriteLine("Number of MH: {0}", MidTempoList.Tracklist.Count);
+            Console.WriteLine("Number of M {0}", MidTempoList.Tracklist.Count);
             Console.WriteLine("Number of H: {0}", HighTempoList.Tracklist.Count);
         }
 
         public async Task GenerateSpotifyPlaylistAsync()
         {
-            Random ran = new Random();
-            int pickedTrack = 0;
-            int songNum = 1;
-            //int cleanIntervals = 0;
-
-            for (int i = 20; i > 0; i--)
-            {
-                switch (songNum)
-                {
-
-                    case 4:
-                        pickedTrack = ran.Next(0, (HighTempoList.Tracklist.Count - 1));
-                        GeneratedList.Add(HighTempoList.Tracklist[pickedTrack]);
-                        HighTempoList.Tracklist.RemoveAt(pickedTrack);
-                        songNum = 2;
-                        break;
-
-                    case 3:
-                        pickedTrack = ran.Next(0, (MidTempoList.Tracklist.Count - 1));
-                        GeneratedList.Add(MidTempoList.Tracklist[pickedTrack]);
-                        MidTempoList.Tracklist.RemoveAt(pickedTrack);
-                        songNum = 4;
-                        break;
-
-                    case 2:
-                        pickedTrack = ran.Next(0, (MidTempoList.Tracklist.Count - 1));
-                        GeneratedList.Add(MidTempoList.Tracklist[pickedTrack]);
-                        MidTempoList.Tracklist.RemoveAt(pickedTrack);
-                        songNum = 1;
-                        break;
-
-                    case 1:
-                        pickedTrack = ran.Next(0, (LowTempoList.Tracklist.Count - 1));
-                        GeneratedList.Add(LowTempoList.Tracklist[pickedTrack]);
-                        LowTempoList.Tracklist.RemoveAt(pickedTrack);
-                        songNum = 3;
-                        break;
-                }
-            }
-
+            Gen = new Generator(HighTempoList, MidTempoList, LowTempoList);
+            GeneratedList = await Task.Run(() => Gen.NewGenPlaylist());
             await DisplayGenListAsync();
         }
         private async Task DisplayGenListAsync()
@@ -260,7 +222,7 @@ namespace Spotify_BPM_Sorter
             }
             else
             {
-                Console.WriteLine("My bad! Do you want me to try again?");
+                Console.WriteLine("My bad! Do you want me to try again? (y/n)");
                 answer = Console.ReadKey();
                 if (answer.Key == ConsoleKey.Y)
                 {
@@ -331,7 +293,7 @@ namespace Spotify_BPM_Sorter
         //}
         private async Task RemoveAllSongsAsync()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < (Tempo.AllTempos.Count - 1); i++)
             {
                 int totalSongs = Tempo.AllTempos[i].Tracklist.Count();
                 string playlistId = Tempo.AllTempos[i].Id;
@@ -356,26 +318,30 @@ namespace Spotify_BPM_Sorter
                     int spotifyPlaylistTotal = (int)playlist.Tracks.Total;
                     List<int> positions = new List<int>();
                     positions.AddRange(Enumerable.Range(0, spotifyPlaylistTotal).ToList());
-                    //Calls list of track ids, seeks and replaces each individual track with proper tempo field
-                    try
-                    {
-                        await Spotify.Playlists.RemoveItems(Tempo.AllTempos[i].Id, new PlaylistRemoveItemsRequest() { Positions=positions, SnapshotId=snapshot });
-                    }catch (APIException e) 
-                    {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine(e.Response?.StatusCode);
-                    }
 
+                    if (positions.Count != 0)
+                    {
+                        //Calls list of track ids, seeks and replaces each individual track with proper tempo field
+                        try
+                        {
+                            await Spotify.Playlists.RemoveItems(Tempo.AllTempos[i].Id, new PlaylistRemoveItemsRequest() { Positions = positions, SnapshotId = snapshot });
+                        }
+                        catch (APIException e)
+                        {
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine(e.Response?.StatusCode);
+                        }
+                    }
                     calledSongs += amountToCall;
                 }
             }
             Console.WriteLine("All Spotify Tempo Playlists Wiped");
         }
-
+            
         public async Task FillSpotifyTemposAsync()
         {
             await RemoveAllSongsAsync();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < (Tempo.AllTempos.Count - 1); i++)
             {
                 int totalSongs = Tempo.AllTempos[i].Tracklist.Count();
                 int calledSongs = 0;

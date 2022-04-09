@@ -23,7 +23,7 @@ namespace Spotify_BPM_Sorter
 
         private int RemoveTempo()
         {
-            int negTemp = ran.Next(-25, -35);
+            int negTemp = ran.Next(-35, -25);
             return negTemp;
         }
         private int AddTempo()
@@ -34,7 +34,7 @@ namespace Spotify_BPM_Sorter
         private bool IsRare()
         {
             int chance = ran.Next(1, 100);
-            if (chance <= 20)
+            if (chance <= 50)
             {
                 return true;
             }
@@ -45,47 +45,60 @@ namespace Spotify_BPM_Sorter
         }
         private void AddSong(int tempo, Tempo songs)
         {
+            int rangeBottom = tempo - 5;
+            int rangeTop = 10;
+            List<int> intlist = new List<int>();
             //create list<int> from range that allows 5 point deviation.
             //ex: 100 becomes 195-105
-            //Send list<int> to songs
-            //receive dbtrack
-            //return dbtrack
+            intlist.AddRange(Enumerable.Range(rangeBottom, rangeTop).ToList());
+            //Send list<int> to Tempo, add returned track
+            DbTrack track = songs.GetSong(intlist);
+            int index = songs.Tracklist.FindIndex(x => x == track);
+            songs.Tracklist.RemoveAt(index);
+            FinalList.Add(track);
         }
         private void AddRareSong(int tempo, Tempo songs)
         {
-            //if tempo is low
-                //send rare list<int>
-                //return dbtrack
-            //else
-                //send high rare list<int>
-                //return dbtrack
-
+            DbTrack track;
+            List<int> intlist = new List<int>();
+            if (tempo < 120)
+            {
+                intlist.AddRange(Enumerable.Range(60, 40).ToList());
+                track = songs.GetSong(intlist);
+                FinalList.Add(track);
+            }
+            else
+            {
+                intlist.AddRange(Enumerable.Range(185, 55).ToList());
+                track = songs.GetSong(intlist);
+                FinalList.Add(track);
+            }
         }
         public List<DbTrack> NewGenPlaylist()
         {
-            int currentTempo = 1;
+            int currentTempo = 130;
             bool up = true;
-            for (var i = 0; i < 20; i--)
+            for (var i = 0; i < 20; i++)
             {
                 if (currentTempo < 120)
                 {
                     up = true;
-                    if (currentTempo <= 100 && IsRare())
+                    if (currentTempo <= 105 && IsRare())
                     {
-                        //Grab rare song
-                        
-                        //Add whatever is necessary to get
-                            //to medium range.
+                        AddRareSong(currentTempo, LowTempo);
+
+                        int difference = 120 - currentTempo;
+                        currentTempo += difference;
                     }
                     else 
                     {
-                        //Grab normal song
+                        AddSong(currentTempo, LowTempo);
                         currentTempo += AddTempo();
                     }
                 }
                 else if (120 <= currentTempo && currentTempo <= 160)
                 {
-                    //grab song
+                    AddSong(currentTempo, MidTempo);
 
                     switch (up)
                     {
@@ -101,76 +114,23 @@ namespace Spotify_BPM_Sorter
                 else if (160 < currentTempo)
                 {
                     up = false;
-                    if (180 <= currentTempo && IsRare())
+                    if (175 <= currentTempo && IsRare())
                     {
-                        //Grab rare song
+                        AddRareSong(currentTempo, HighTempo);
 
-                        //Remove whatever is necessary to get
-                            //to medium range.
+                        int difference = currentTempo - 160;
+                        currentTempo -= difference;
                     }
                     else
                     {
-                        //Grab normal song
+                        AddSong(currentTempo, HighTempo);
                         currentTempo += RemoveTempo();
                     }
                 }
             }
 
+            return FinalList;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //int pickedTrack = 0;
-            //int cleanIntervals = 0;
-            //for (int i = 20; i > 0; i--)
-            //{
-            //    switch (songNum)
-            //    {
-
-            //        case 4:
-            //            pickedTrack = ran.Next(0, (HighTempoList.Tracklist.Count - 1));
-            //            GeneratedList.Add(HighTempoList.Tracklist[pickedTrack]);
-            //            HighTempoList.Tracklist.RemoveAt(pickedTrack);
-            //            songNum = 2;
-            //            break;
-
-            //        case 3:
-            //            pickedTrack = ran.Next(0, (MidTempoList.Tracklist.Count - 1));
-            //            GeneratedList.Add(MidTempoList.Tracklist[pickedTrack]);
-            //            MidTempoList.Tracklist.RemoveAt(pickedTrack);
-            //            songNum = 4;
-            //            break;
-
-            //        case 2:
-            //            pickedTrack = ran.Next(0, (MidTempoList.Tracklist.Count - 1));
-            //            GeneratedList.Add(MidTempoList.Tracklist[pickedTrack]);
-            //            MidTempoList.Tracklist.RemoveAt(pickedTrack);
-            //            songNum = 1;
-            //            break;
-
-            //        case 1:
-            //            pickedTrack = ran.Next(0, (LowTempoList.Tracklist.Count - 1));
-            //            GeneratedList.Add(LowTempoList.Tracklist[pickedTrack]);
-            //            LowTempoList.Tracklist.RemoveAt(pickedTrack);
-            //            songNum = 3;
-            //            break;
-            //    }
-            //}
         }
-
     }
 }

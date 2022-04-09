@@ -25,13 +25,21 @@ namespace Spotify_BPM_Sorter
 
         public DbTrack GetSong(List<int> tempoRange)
         {
+            DbTrack dbTrack;
+            int selected;
             //Find songs that match in this range
             var pickableTracks = this.Tracklist.FindAll(t => tempoRange.First<int>() <= t.Tempo && t.Tempo <= tempoRange.Last<int>());
+            if (pickableTracks.Count == 0)
+            {
+                selected = Ran.Next(0, this.Tracklist.Count);
+                dbTrack = this.Tracklist[selected];
+                return dbTrack;
+            }
             //select random track
-            int selected = Ran.Next(0, (pickableTracks.Count - 1));
-            var dbTrack = pickableTracks[selected];
+            selected = Ran.Next(0, (pickableTracks.Count - 1));
+            dbTrack = pickableTracks[selected];
             //remove that track
-            this.Tracklist.RemoveAt(selected);
+            pickableTracks.Clear();
             return dbTrack;
         }
     }
