@@ -32,12 +32,6 @@ namespace Spotify_BPM_Sorter
 
             await Start();
 
-            //var key = Console.ReadKey();
-            //if (key.Key == ConsoleKey.Y)
-            //{
-            //    await PlaylistMaker.GenerateSpotifyPlaylistAsync();
-            //    Console.ReadLine();
-            //}
             var key = Console.ReadKey();
             if (key.Key == ConsoleKey.Y)
             {
@@ -84,33 +78,14 @@ namespace Spotify_BPM_Sorter
             );
             
             var spotify = new SpotifyClient(tokenResponse.AccessToken);
-            //var testlist = new List<string>();
-            //testlist.Add("4B4XTUhXtD4nSu5bGeCPsZ");
-            //try
-            //{
-            //    await spotify.Playlists.AddItems("1aVAPx6hAmr7khdmO9GxDL", new PlaylistAddItemsRequest(testlist));
-            //} catch(APIException e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //    Console.WriteLine(e.Response?.StatusCode);
-            //}
+            
             PlaylistMaker = await PlayListMaker.CreateAsync(spotify);
+
             Console.WriteLine("PlaylistMaker Initialized");
             await PlaylistMaker.FillSpotifyTemposAsync();
             await Task.Run(() => Console.WriteLine("Generate?"));
-            //key = await DetectKey();
-            //if (key.Key == ConsoleKey.Y)
-            //{
-            //    await PlaylistMaker.GenerateSpotifyPlaylistAsync();
-            //}
+            
         }
-
-        private static async Task<ConsoleKeyInfo> DetectKey()
-        {
-            var key = await Task.Run(() => Console.ReadKey(true));
-            return key;
-        }
-
 
         private static async Task OnErrorReceived(object sender, string error, string state)
         {

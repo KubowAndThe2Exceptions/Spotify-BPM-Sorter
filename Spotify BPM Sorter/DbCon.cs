@@ -139,9 +139,6 @@ namespace Spotify_BPM_Sorter
         {
 
         }
-
-        //public DbTrack GetTrack() {}
-        //public void InsertTrack(DbTrack track) {}
-        //public void InsertTrackList(List<DbTrack> tracklist) {}
+        
     }
 }

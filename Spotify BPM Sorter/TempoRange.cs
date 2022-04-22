@@ -8,23 +8,39 @@ namespace Spotify_BPM_Sorter
 {
     class TempoRange
     {
-        //public static List<Tempo> AllTempos = new List<Tempo>();
-        public Tempo LowerTempo;
-        public Tempo HigherTempo;
+        public static List<TempoRange> AllTempos = new List<TempoRange>();
+        public List<DbTrack> Tracklist = new List<DbTrack>();
+        public static Random Ran = new Random();
+        public string Id { get; set; } = string.Empty;
 
-        public TempoRange(Tempo lowerTempo, Tempo higherTempo)
+        public TempoRange()
         {
-            LowerTempo = lowerTempo;
-            HigherTempo = higherTempo;
-            //AllTempos.Add(lowerTempo);
-            //AllTempos.Add(higherTempo);
-            //add sorting in future
+            AllTempos.Add(this);
+        }
+        public TempoRange(string id)
+        {
+            AllTempos.Add(this);
+            Id = id;
         }
 
-        public int Total()
+        public DbTrack GetSong(List<int> tempoRange)
         {
-            var total = LowerTempo.Tracklist.Count + HigherTempo.Tracklist.Count;
-            return total;
+            DbTrack dbTrack;
+            int selected;
+            //Find songs that match in this range
+            var pickableTracks = this.Tracklist.FindAll(t => tempoRange.First<int>() <= t.Tempo && t.Tempo <= tempoRange.Last<int>());
+            if (pickableTracks.Count == 0)
+            {
+                selected = Ran.Next(0, this.Tracklist.Count);
+                dbTrack = this.Tracklist[selected];
+                return dbTrack;
+            }
+            //select random track
+            selected = Ran.Next(0, (pickableTracks.Count - 1));
+            dbTrack = pickableTracks[selected];
+            //remove that track from master list, then return it
+            pickableTracks.Clear();
+            return dbTrack;
         }
     }
 }

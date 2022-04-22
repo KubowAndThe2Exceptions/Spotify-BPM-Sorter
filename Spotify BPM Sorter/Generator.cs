@@ -8,13 +8,13 @@ namespace Spotify_BPM_Sorter
 {
     class Generator
     {
-        public static Tempo HighTempo;
-        public static Tempo MidTempo;
-        public static Tempo LowTempo;
+        public static TempoRange HighTempo;
+        public static TempoRange MidTempo;
+        public static TempoRange LowTempo;
         public static List<DbTrack> FinalList = new List<DbTrack>();
         public static Random ran = new Random();
 
-        public Generator(Tempo highTempo, Tempo midTempo, Tempo lowTempo)
+        public Generator(TempoRange highTempo, TempoRange midTempo, TempoRange lowTempo)
         {
             HighTempo = highTempo;
             MidTempo = midTempo;
@@ -23,16 +23,19 @@ namespace Spotify_BPM_Sorter
 
         private int RemoveTempo()
         {
+            //Picks random number between -35 and -25
             int negTemp = ran.Next(-35, -25);
             return negTemp;
         }
         private int AddTempo()
         {
+            //Picks a random number between 25 and 35
             int posTemp = ran.Next(25, 35);
             return posTemp;
         }
         private bool IsRare()
         {
+            //Picks 1-100, 50% chance to return true
             int chance = ran.Next(1, 100);
             if (chance <= 50)
             {
@@ -43,22 +46,24 @@ namespace Spotify_BPM_Sorter
                 return false;
             }
         }
-        private void AddSong(int tempo, Tempo songs)
+        private void AddSong(int tempo, TempoRange songs)
         {
-            int rangeBottom = tempo - 5;
-            int rangeTop = 10;
-            List<int> intlist = new List<int>();
             //create list<int> from range that allows 5 point deviation.
             //ex: 100 becomes 195-105
-            intlist.AddRange(Enumerable.Range(rangeBottom, rangeTop).ToList());
+            int rangeBottom = tempo - 5;
+            int rangeCount = 10;
+            List<int> intlist = new List<int>();
+            intlist.AddRange(Enumerable.Range(rangeBottom, rangeCount).ToList());
+            
             //Send list<int> to Tempo, add returned track
             DbTrack track = songs.GetSong(intlist);
             int index = songs.Tracklist.FindIndex(x => x == track);
             songs.Tracklist.RemoveAt(index);
             FinalList.Add(track);
         }
-        private void AddRareSong(int tempo, Tempo songs)
+        private void AddRareSong(int tempo, TempoRange songs)
         {
+            //If tempo currently high, pick a high song from the rare tempos, vice versa
             DbTrack track;
             List<int> intlist = new List<int>();
             if (tempo < 120)
@@ -76,6 +81,8 @@ namespace Spotify_BPM_Sorter
         }
         public List<DbTrack> NewGenPlaylist()
         {
+            //oscilates up and down in tempo, checks for rare song placement
+            //in high or low tempo ranges, then returns the final list
             int currentTempo = 130;
             bool up = true;
             for (var i = 0; i < 20; i++)
@@ -110,6 +117,7 @@ namespace Spotify_BPM_Sorter
                             break;
                     }
                 }
+                
                 //Would make a single else statement, but I find this more readable
                 else if (160 < currentTempo)
                 {
