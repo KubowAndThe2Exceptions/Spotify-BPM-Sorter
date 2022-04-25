@@ -246,6 +246,10 @@ namespace Spotify_BPM_Sorter
             int totalSongs = GeneratedList.Count();
             int calledSongs = 0;
 
+            //Converts to txt file
+            Gen.ListToTxt(GeneratedList);
+            Console.WriteLine("Generated playlist saved as txt file");
+
             while (calledSongs < totalSongs)
             {
                 //Gets number of songs left to call, only allows <= 100 ids through

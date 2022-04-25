@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Spotify_BPM_Sorter
 {
@@ -46,7 +47,12 @@ namespace Spotify_BPM_Sorter
                 return false;
             }
         }
-        private void AddSong(int tempo, TempoRange songs)
+        private void RemoveTrack(DbTrack track, TempoRange range)
+        {
+            int index = range.Tracklist.FindIndex(x => x == track);
+            range.Tracklist.RemoveAt(index);
+        }
+        private void AddSong(int tempo, TempoRange range)
         {
             //create list<int> from range that allows 5 point deviation.
             //ex: 100 becomes 195-105
@@ -56,12 +62,11 @@ namespace Spotify_BPM_Sorter
             intlist.AddRange(Enumerable.Range(rangeBottom, rangeCount).ToList());
             
             //Send list<int> to Tempo, add returned track
-            DbTrack track = songs.GetSong(intlist);
-            int index = songs.Tracklist.FindIndex(x => x == track);
-            songs.Tracklist.RemoveAt(index);
+            DbTrack track = range.GetSong(intlist);
+            RemoveTrack(track, range);
             FinalList.Add(track);
         }
-        private void AddRareSong(int tempo, TempoRange songs)
+        private void AddRareSong(int tempo, TempoRange range)
         {
             //If tempo currently high, pick a high song from the rare tempos, vice versa
             DbTrack track;
@@ -69,13 +74,15 @@ namespace Spotify_BPM_Sorter
             if (tempo < 120)
             {
                 intlist.AddRange(Enumerable.Range(60, 40).ToList());
-                track = songs.GetSong(intlist);
+                track = range.GetSong(intlist);
+                RemoveTrack(track, range);
                 FinalList.Add(track);
             }
             else
             {
                 intlist.AddRange(Enumerable.Range(185, 55).ToList());
-                track = songs.GetSong(intlist);
+                track = range.GetSong(intlist);
+                RemoveTrack(track, range);
                 FinalList.Add(track);
             }
         }
@@ -139,6 +146,18 @@ namespace Spotify_BPM_Sorter
 
             return FinalList;
 
+        }
+        public void ListToTxt(List<DbTrack> list)
+        {
+            string date = DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-tt");
+            string txtContent = date + "\r";
+            foreach (var item in list)
+            {
+                txtContent += item.ToString();
+            }
+            string txtname = date + ".txt";
+            string txtpath = @"C:\Users\Amazingg\Desktop\Generated Playlists\" + txtname;
+            File.WriteAllText(txtpath, txtContent);
         }
     }
 }

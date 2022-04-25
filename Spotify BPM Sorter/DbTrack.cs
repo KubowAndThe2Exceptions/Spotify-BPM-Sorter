@@ -62,6 +62,16 @@ namespace Spotify_BPM_Sorter
             TrackId = trackId;
         }
 
+        public override string ToString()
+        {
+            string convertedString = 
+                "Name: " + this.Name +
+                " | Tempo: " + this.Tempo + " " +
+                " | Artist(s): " + this.Artists +
+                " | Album: " + this.AlbumName +
+                "\r";
+            return convertedString;
+        }
         public void Display()
         {
             Console.WriteLine("Name: {0} | Tempo: {1} | Artist(s): {2} | Album: {3}", this.Name, this.Tempo, this.Artists, this.AlbumName);
