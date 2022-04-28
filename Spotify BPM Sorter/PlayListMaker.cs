@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
+using System.IO;
 
 namespace Spotify_BPM_Sorter
 {
@@ -17,6 +18,7 @@ namespace Spotify_BPM_Sorter
         public TempoRange HighTempoList { get; set; }
         private static Generator Gen { get; set; }
         public List<DbTrack> TrackList { get; set; } = new List<DbTrack>();
+        public List<DbTrack> NewSongs { get; set; } = new List<DbTrack>();
         public List<DbTrack> GeneratedList { get; set; } = new List<DbTrack>();
         public List<DbTrack> TempoProblems { get; set; } = new List<DbTrack>();
         public SpotifyClient Spotify { get; set; }
@@ -152,12 +154,14 @@ namespace Spotify_BPM_Sorter
                         index = TrackList.FindIndex(t => t.TrackId == track.Id);
                         TrackList[index].Tempo = track.Tempo;
                         Console.WriteLine("New Track Added!");
+                        NewSongs.Add(TrackList[index]);
                         TrackList[index].Display();
                         DataBaseContext.StoreTrack(TrackList[index]);
                     }
                 }
                 calledSongs += amountToCall;
             }
+            TxtMaker.CreateNewSongsTxt(NewSongs);
             Console.WriteLine("Track Analysis Finished, Tempos Acquired.");
         }
 
@@ -247,7 +251,7 @@ namespace Spotify_BPM_Sorter
             int calledSongs = 0;
 
             //Converts to txt file
-            Gen.ListToTxt(GeneratedList);
+            TxtMaker.CreateGeneratedPlaylistTxt(GeneratedList);
             Console.WriteLine("Generated playlist saved as txt file");
 
             while (calledSongs < totalSongs)
@@ -402,6 +406,5 @@ namespace Spotify_BPM_Sorter
                 Console.ReadLine();
             }
         }
-
     }
 }

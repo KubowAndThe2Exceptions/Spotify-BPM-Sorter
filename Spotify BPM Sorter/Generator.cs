@@ -147,17 +147,5 @@ namespace Spotify_BPM_Sorter
             return FinalList;
 
         }
-        public void ListToTxt(List<DbTrack> list)
-        {
-            string date = DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-tt");
-            string txtContent = date + "\r";
-            foreach (var item in list)
-            {
-                txtContent += item.ToString();
-            }
-            string txtname = date + ".txt";
-            string txtpath = @"C:\Users\Amazingg\Desktop\Generated Playlists\" + txtname;
-            File.WriteAllText(txtpath, txtContent);
-        }
     }
 }
