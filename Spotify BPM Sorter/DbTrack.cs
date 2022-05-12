@@ -7,7 +7,7 @@ using SpotifyAPI.Web;
 
 namespace Spotify_BPM_Sorter
 {
-    class DbTrack
+    public class DbTrack
     {
         public string Name { get; set; }
         public string TrackId { get; set; }
