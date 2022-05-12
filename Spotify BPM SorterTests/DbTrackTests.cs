@@ -70,6 +70,5 @@ namespace Spotify_BPM_Sorter.Tests
             }
             Assert.IsTrue(isSuccess);
         }
-
     }
 }

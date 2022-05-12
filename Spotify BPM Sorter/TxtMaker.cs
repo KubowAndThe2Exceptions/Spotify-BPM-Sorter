@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Spotify_BPM_Sorter
 {
-    static class TxtMaker
+    public static class TxtMaker
     {
         public static void CreateGeneratedPlaylistTxt(List<DbTrack> list)
         {
