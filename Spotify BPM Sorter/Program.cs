@@ -35,7 +35,7 @@ namespace Spotify_BPM_Sorter
             var key = Console.ReadKey();
             if (key.Key == ConsoleKey.Y)
             {
-                await PlaylistMaker.GenerateSpotifyPlaylistAsync();
+                //await PlaylistMaker.GenerateSpotifyPlaylistAsync();
                 Console.ReadLine();
             }
             Console.ReadKey();            

@@ -16,7 +16,6 @@ namespace Spotify_BPM_Sorter
         public TempoRange LowTempoList { get; set; }
         public TempoRange MidTempoList { get; set; }
         public TempoRange HighTempoList { get; set; }
-        private static Generator Gen { get; set; }
         public List<DbTrack> TrackList { get; set; } = new List<DbTrack>();
         public List<DbTrack> NewSongs { get; set; } = new List<DbTrack>();
         public List<DbTrack> GeneratedList { get; set; } = new List<DbTrack>();
@@ -212,13 +211,6 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("Number of H: {0}", HighTempoList.Tracklist.Count);
         }
 
-        public async Task GenerateSpotifyPlaylistAsync()
-        {
-            //Calls generator to generate playlist, then displays it
-            Gen = new Generator(HighTempoList, MidTempoList, LowTempoList);
-            GeneratedList = await Task.Run(() => Gen.NewGenPlaylist());
-            await DisplayGenListAsync();
-        }
         private async Task DisplayGenListAsync()
         {
             //Displays generated playlist to user, then prompts to
@@ -241,7 +233,7 @@ namespace Spotify_BPM_Sorter
                 answer = Console.ReadKey();
                 if (answer.Key == ConsoleKey.Y)
                 {
-                    await GenerateSpotifyPlaylistAsync();
+                    //await GenerateSpotifyPlaylistAsync();
                 }
             }
         }
@@ -396,15 +388,15 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("Spotify Tempo Playlists Filled");
         }
         
-        public async Task GenPrompt()
-        {
-            Console.WriteLine("Generate?");
-            var key = Console.ReadKey();
-            if (key.Key == ConsoleKey.Y)
-            {
-                await GenerateSpotifyPlaylistAsync();
-                Console.ReadLine();
-            }
-        }
+        //public async Task GenPrompt()
+        //{
+        //    Console.WriteLine("Generate?");
+        //    var key = Console.ReadKey();
+        //    if (key.Key == ConsoleKey.Y)
+        //    {
+        //        await GenerateSpotifyPlaylistAsync();
+        //        Console.ReadLine();
+        //    }
+        //}
     }
 }
