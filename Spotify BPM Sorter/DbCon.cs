@@ -25,10 +25,6 @@ namespace Spotify_BPM_Sorter
             }
         }
 
-        public void CompareTrack()
-        {
-
-        }
 
         public void StoreTrack(DbTrack track)
         {
@@ -55,10 +51,7 @@ namespace Spotify_BPM_Sorter
                 connection.Close();
             }
         }
-        public void FindTrack(DbTrack Track)
-        {
-
-        }
+        
         public void FixArtists(string artists, string id)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -135,10 +128,5 @@ namespace Spotify_BPM_Sorter
 
             }
         }
-        public void GetAllTracks()
-        {
-
-        }
-        
     }
 }
