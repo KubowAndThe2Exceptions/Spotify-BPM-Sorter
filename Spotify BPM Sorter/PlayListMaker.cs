@@ -12,7 +12,7 @@ namespace Spotify_BPM_Sorter
     class PlayListMaker
     {
         public string TargetPlaylist { get; set; }
-        private string CurrentUserId { get; set; }
+        private string _currentUserId { get; set; }
         public TempoRange LowTempoList { get; set; }
         public TempoRange MidTempoList { get; set; }
         public TempoRange HighTempoList { get; set; }
@@ -51,19 +51,20 @@ namespace Spotify_BPM_Sorter
         private async Task<int> GetPlaylistTotalAsync(string playlistId)
         {
             //new playlistrequest only asking for the total num of songs
-            var playlistGIR = new PlaylistGetItemsRequest();
-            playlistGIR.Fields.Add("total");
+            var playlistGIrequest = new PlaylistGetItemsRequest();
+            playlistGIrequest.Fields.Add("total");
 
             //calls playlist and extracts total num of songs
-            var playlistTotalSongData = await Spotify.Playlists.GetItems(playlistId, playlistGIR);
+            var totalSongsPlaylist = await Spotify.Playlists.GetItems(playlistId, playlistGIrequest);
+            int numSongsInPlaylist = (int)totalSongsPlaylist.Total;
 
-            return (int)playlistTotalSongData.Total;
+            return numSongsInPlaylist;
         }
 
         private async Task RequestUserIdAsync()
         {
             var userInfo = await Spotify.UserProfile.Current();
-            CurrentUserId = userInfo.Id;
+            _currentUserId = userInfo.Id;
         }
         private async Task FillTrackListAsync()
         {
@@ -72,7 +73,7 @@ namespace Spotify_BPM_Sorter
             int offset = 0;
             while (calledSongs <= totalSongs)
             {
-                var list = new List<DbTrack>();
+                var tracks = new List<DbTrack>();
 
                 //Calls api and converts from FullTrack to DbTrack
                 var playlist = await Spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { Offset = offset });
@@ -82,12 +83,12 @@ namespace Spotify_BPM_Sorter
                     {
                         DbTrack track = new DbTrack(fullTrack.Name, fullTrack.Id, fullTrack.Uri, 
                             fullTrack.DurationMs, fullTrack.Artists, fullTrack.Album.Name);
-                        list.Add(track);
+                        tracks.Add(track);
                     }
                 }
                 
                 //Adds tracks to TrackList
-                TrackList.AddRange(list);
+                TrackList.AddRange(tracks);
 
                 var count = (int)playlist.Items.Count;
                 calledSongs += count;
@@ -98,7 +99,7 @@ namespace Spotify_BPM_Sorter
             await AddTrackAnalysisInfoAsync();
             
             //Detects problems with tempo and then sorts to complete tracklist
-            DetectTempoProblems();
+            DetectTempoErrors();
             SortTempos();
 
         }
@@ -164,7 +165,7 @@ namespace Spotify_BPM_Sorter
             Console.WriteLine("Track Analysis Finished, Tempos Acquired.");
         }
 
-        private void DetectTempoProblems()
+        private void DetectTempoErrors()
         {
             //Seeks out unset tempos and removes them from tracklist
             TempoErrors = TrackList.FindAll(t => t.Tempo == 0);
@@ -175,9 +176,7 @@ namespace Spotify_BPM_Sorter
             }
 
             TrackList.Sort((x, y) => x.Tempo.CompareTo(y.Tempo));
-            Console.WriteLine("Tempo Problems Detected");
-            Console.WriteLine("Lowest Tempo: {0}", TrackList[0].Tempo);
-            Console.WriteLine("Highest Tempo: {0}", TrackList.Last().Tempo);
+            Console.WriteLine("Tempo Errors Detected");
         }
         
         private void SortTempos()

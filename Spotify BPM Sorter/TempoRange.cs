@@ -23,7 +23,7 @@ namespace Spotify_BPM_Sorter
             Id = id;
         }
 
-        public DbTrack GetSong(List<int> tempoRange)
+        public DbTrack GetNearbySong(List<int> tempoRange)
         {
             DbTrack dbTrack;
             int selected;
