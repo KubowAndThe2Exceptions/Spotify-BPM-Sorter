@@ -24,10 +24,14 @@ namespace Spotify_BPM_Sorter
         
         public DbCon DataBaseContext = new DbCon();
 
+        // I'm using a async method for initialization because the initialization
+        // tasks cannot be used without an async parent method.
         public static async Task<PlayListMaker> CreateAsync(SpotifyClient spotify)
         {
             var playListMaker = new PlayListMaker(spotify);
             await playListMaker.RequestUserIdAsync();
+            
+            // TODO: Should be moved elsewhere, does not belong in creation.
             await playListMaker.FillTrackListAsync();
             return playListMaker;
         }
@@ -43,7 +47,6 @@ namespace Spotify_BPM_Sorter
             HighTempoList = new TempoRange(HPlaylist);
             MidTempoList = new TempoRange(MPlaylist);
             LowTempoList = new TempoRange(LPlaylist);
-
             Spotify = spotify;
 
         }
@@ -107,12 +110,19 @@ namespace Spotify_BPM_Sorter
         {
             var totalSongs = TrackList.Count;
             int calledSongs = 0;
-
+            // TODO: could be greatly shortened like so:
+            // Get total num of songs
+            // Divide by 100 (use remainder as well)
+            // Make array of TracksAudioFeaturesResponse thats as long as number of iterations needed
+            // FillAudioFeaturesAsync: Use foreach to call and get audio features
+            // StoreTemposAsync: Use separate method to shuffle through array and correct tempos
             while (calledSongs < totalSongs)
             {
                 //Gets number of songs left to call, only allows <= 100 ids through
                 var difference = totalSongs - calledSongs;
                 var amountToCall = 0;
+                
+                // TODO: Might be a simplifiable equation
                 if (difference > 100)
                 {
                     amountToCall = 100;
@@ -132,6 +142,8 @@ namespace Spotify_BPM_Sorter
 
                 //Calls list of track ids
                 var trackFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
+
+                // TODO: Clean this up and put it in a new method that takes List/Array[TracksAudioFeaturesResponse]
                 foreach (var track in trackFeatures.AudioFeatures)
                 {
                     //References DB for tempo by default.  If the tempo is not set in the DB

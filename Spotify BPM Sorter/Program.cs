@@ -78,13 +78,10 @@ namespace Spotify_BPM_Sorter
             );
             
             var spotify = new SpotifyClient(tokenResponse.AccessToken);
-            
             PlaylistMaker = await PlayListMaker.CreateAsync(spotify);
 
             Console.WriteLine("PlaylistMaker Initialized");
             await PlaylistMaker.FillSpotifyTemposAsync();
-            await Task.Run(() => Console.WriteLine("Generate?"));
-            
         }
 
         private static async Task OnErrorReceived(object sender, string error, string state)
