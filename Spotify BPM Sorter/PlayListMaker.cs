@@ -108,12 +108,23 @@ namespace Spotify_BPM_Sorter
         }
         private async Task AddTrackAnalysisInfoAsync()
         {
-            var totalSongs = TrackList.Count;
+            int totalSongs = TrackList.Count;
             int calledSongs = 0;
+            int remainder = 0;
+            int calls = Math.DivRem(totalSongs, 100, out remainder);
+            if (remainder > 0)
+            {
+                calls++;
+            }
+            var AudioFeaturesArray = new TracksAudioFeaturesResponse[calls];
+            List<string> extractedStrings = new List<string>();
+
             // TODO: could be greatly shortened like so:
-            // Get total num of songs
-            // Divide by 100 (use remainder as well)
-            // Make array of TracksAudioFeaturesResponse thats as long as number of iterations needed
+            // Get total num of songs,
+            // Divide by 100 (use remainder as well),
+            // Make array of TracksAudioFeaturesResponse thats as long as number of iterations needed,
+            // Extract all track ids,
+            // call in 100s, if remainder > 0 then last call = calling with remainder,
             // FillAudioFeaturesAsync: Use foreach to call and get audio features
             // StoreTemposAsync: Use separate method to shuffle through array and correct tempos
             while (calledSongs < totalSongs)
