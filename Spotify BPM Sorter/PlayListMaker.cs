@@ -112,12 +112,46 @@ namespace Spotify_BPM_Sorter
             int calledSongs = 0;
             int remainder = 0;
             int calls = Math.DivRem(totalSongs, 100, out remainder);
+            List<DbTrack> listToExtract = new List<DbTrack>();
+            List<string> extractedStrings = new List<string>();
             if (remainder > 0)
             {
                 calls++;
             }
             var AudioFeaturesArray = new TracksAudioFeaturesResponse[calls];
             List<string> extractedStrings = new List<string>();
+            TracksAudioFeaturesResponse extractedAudioFeatures = new TracksAudioFeaturesResponse();
+
+            while (calledSongs < totalSongs)
+            {
+                for (var i = 0; i < calls; i++)
+                {
+                    if (i == calls - 1)
+                    {
+                        // Can be turned into method
+                        listToExtract = TrackList.GetRange(calledSongs, remainder);
+                        foreach (var track in listToExtract)
+                        {
+                            extractedStrings.Add(track.TrackId);
+                        }
+                        extractedAudioFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
+                        AudioFeaturesArray[i] = extractedAudioFeatures;
+                        calledSongs += remainder;
+                        continue;
+                    }
+                    // Can be turned into method
+                    listToExtract = TrackList.GetRange(calledSongs, 100);
+                    foreach (var track in listToExtract)
+                    {
+                        extractedStrings.Add(track.TrackId);
+                    }
+
+                    extractedAudioFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
+                    AudioFeaturesArray[i] = extractedAudioFeatures;
+                    calledSongs += 100;
+                }
+            }
+
 
             // TODO: could be greatly shortened like so:
             // Get total num of songs,
@@ -317,6 +351,14 @@ namespace Spotify_BPM_Sorter
                 }
             }
             Console.WriteLine("Spotify Tempo Playlists Filled");
+        }
+        private void ExtractTracks(int calledSongs, int remainder, TracksAudioFeaturesResponse audioFeaturesContainer)
+        {
+            listToExtract = TrackList.GetRange(calledSongs, remainder);
+            foreach (var track in listToExtract)
+            {
+                extractedStrings.Add(track.TrackId);
+            }
         }
     }
 }
