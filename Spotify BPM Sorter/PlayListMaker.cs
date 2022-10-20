@@ -111,22 +111,22 @@ namespace Spotify_BPM_Sorter
             int totalSongs = TrackList.Count;
             int calledSongs = 0;
             int remainder = 0;
-            int calls = Math.DivRem(totalSongs, 100, out remainder);
-            List<DbTrack> listToExtract = new List<DbTrack>();
-            List<string> extractedStrings = new List<string>();
+            int totalCalls = Math.DivRem(totalSongs, 100, out remainder);
             if (remainder > 0)
             {
-                calls++;
+                totalCalls++;
             }
-            var AudioFeaturesArray = new TracksAudioFeaturesResponse[calls];
+            int lastCall = totalCalls - 1;
+            List<DbTrack> listToExtract = new List<DbTrack>();
             List<string> extractedStrings = new List<string>();
+            var AudioFeaturesArray = new TracksAudioFeaturesResponse[totalCalls];
             TracksAudioFeaturesResponse extractedAudioFeatures = new TracksAudioFeaturesResponse();
 
             while (calledSongs < totalSongs)
             {
-                for (var i = 0; i < calls; i++)
+                for (var i = 0; i < totalCalls; i++)
                 {
-                    if (i == calls - 1)
+                    if (i == lastCall && remainder > 0)
                     {
                         // Can be turned into method
                         listToExtract = TrackList.GetRange(calledSongs, remainder);
@@ -352,13 +352,13 @@ namespace Spotify_BPM_Sorter
             }
             Console.WriteLine("Spotify Tempo Playlists Filled");
         }
-        private void ExtractTracks(int calledSongs, int remainder, TracksAudioFeaturesResponse audioFeaturesContainer)
-        {
-            listToExtract = TrackList.GetRange(calledSongs, remainder);
-            foreach (var track in listToExtract)
-            {
-                extractedStrings.Add(track.TrackId);
-            }
-        }
+        //private void ExtractTracks(int calledSongs, int remainder, TracksAudioFeaturesResponse audioFeaturesContainer)
+        //{
+        //    listToExtract = TrackList.GetRange(calledSongs, remainder);
+        //    foreach (var track in listToExtract)
+        //    {
+        //        extractedStrings.Add(track.TrackId);
+        //    }
+        //}
     }
 }
