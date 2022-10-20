@@ -66,7 +66,7 @@ namespace Spotify_BPM_Sorter
                 connection.Close();
             }
         }
-        public bool Exists(string id)
+        public bool TrackExists(string id)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {

@@ -106,6 +106,8 @@ namespace Spotify_BPM_Sorter
             SortTempos();
 
         }
+        
+        //TODO: Method needs comments
         private async Task AddTrackAnalysisInfoAsync()
         {
             int totalSongs = TrackList.Count;
@@ -152,74 +154,21 @@ namespace Spotify_BPM_Sorter
                 }
             }
 
-
-            // TODO: could be greatly shortened like so:
-            // Get total num of songs,
-            // Divide by 100 (use remainder as well),
-            // Make array of TracksAudioFeaturesResponse thats as long as number of iterations needed,
-            // Extract all track ids,
-            // call in 100s, if remainder > 0 then last call = calling with remainder,
-            // FillAudioFeaturesAsync: Use foreach to call and get audio features
-            // StoreTemposAsync: Use separate method to shuffle through array and correct tempos
-            while (calledSongs < totalSongs)
+            foreach ( var audioFeaturesGroup in AudioFeaturesArray)
             {
-                //Gets number of songs left to call, only allows <= 100 ids through
-                var difference = totalSongs - calledSongs;
-                var amountToCall = 0;
-                
-                // TODO: Might be a simplifiable equation
-                if (difference > 100)
-                {
-                    amountToCall = 100;
-                }
-                else
-                {
-                    amountToCall = difference;
-                }
+                //TODO: Method needs comments
+                UpdateTempos(audioFeaturesGroup);
+            } 
 
-                //Adds <= 100 track ids into a list of strings
-                List<string> extractedStrings = new List<string>();
-                List<DbTrack> listToExtract = TrackList.GetRange(calledSongs, amountToCall);
-                foreach (var track in listToExtract)
-                {
-                    extractedStrings.Add(track.TrackId);
-                }
-
-                //Calls list of track ids
-                var trackFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
-
-                // TODO: Clean this up and put it in a new method that takes List/Array[TracksAudioFeaturesResponse]
-                foreach (var track in trackFeatures.AudioFeatures)
-                {
-                    //References DB for tempo by default.  If the tempo is not set in the DB
-                    //or if the track does not exist in the DB, then it uses spotify's provided tempo
-                    int index;
-                    if (DataBaseContext.Exists(track.Id))
-                    {
-                        var tempo = DataBaseContext.GetTempo(track.Id);
-                        if (tempo == 0 && track.Tempo > 0)
-                        {
-                            tempo = track.Tempo;
-                            DataBaseContext.SetTempo(track.Tempo, track.Id);
-                        }
-                        index = TrackList.FindIndex(t => t.TrackId == track.Id);
-                        TrackList[index].Tempo = tempo;
-                        DataBaseContext.FixArtists(TrackList[index].Artists, track.Id);
-                    }
-                    else
-                    {
-                        index = TrackList.FindIndex(t => t.TrackId == track.Id);
-                        TrackList[index].Tempo = track.Tempo;
-                        Console.WriteLine("New Track Added!");
-                        NewSongs.Add(TrackList[index]);
-                        TrackList[index].Display();
-                        DataBaseContext.StoreTrack(TrackList[index]);
-                    }
-                }
-                calledSongs += amountToCall;
-            }
-            TxtMaker.CreateNewSongsTxt(NewSongs);
-            Console.WriteLine("Track Analysis Finished, Tempos Acquired.");
+            // Might still be possible vvvvvv
+                // TODO: could be greatly shortened like so:
+                // Get total num of songs,
+                // Divide by 100 (use remainder as well),
+                // Make array of TracksAudioFeaturesResponse thats as long as number of iterations needed,
+                // Extract all track ids,
+                // call in 100s, if remainder > 0 then last call = calling with remainder,
+                // FillAudioFeaturesAsync: Use foreach to call and get audio features
+                // StoreTemposAsync: Use separate method to shuffle through array and correct tempos
         }
 
         private void DetectTempoErrors()
@@ -351,6 +300,38 @@ namespace Spotify_BPM_Sorter
                 }
             }
             Console.WriteLine("Spotify Tempo Playlists Filled");
+        }
+
+        private void UpdateTempos(TracksAudioFeaturesResponse trackFeatures)
+        {
+            foreach (var spotifyTrack in trackFeatures.AudioFeatures)
+            {
+                //References DB for tempo by default.  If the tempo is not set in the DB
+                //or if the track does not exist in the DB, then it uses spotify's provided tempo
+                int index;
+                if (DataBaseContext.TrackExists(spotifyTrack.Id))
+                {
+                    float tempo = DataBaseContext.GetTempo(spotifyTrack.Id);
+                    if (tempo == 0 && spotifyTrack.Tempo > 0)
+                    {
+                        DataBaseContext.SetTempo(spotifyTrack.Tempo, spotifyTrack.Id);
+                        index = TrackList.FindIndex(t => t.TrackId == spotifyTrack.Id);
+                        TrackList[index].Tempo = spotifyTrack.Tempo;
+                        DataBaseContext.FixArtists(TrackList[index].Artists, spotifyTrack.Id);
+                    }
+                    index = TrackList.FindIndex(t => t.TrackId == spotifyTrack.Id);
+                    TrackList[index].Tempo = tempo;
+                    DataBaseContext.FixArtists(TrackList[index].Artists, spotifyTrack.Id);
+                }
+                else
+                {
+                    index = TrackList.FindIndex(t => t.TrackId == spotifyTrack.Id);
+                    TrackList[index].Tempo = spotifyTrack.Tempo;
+                    NewSongs.Add(TrackList[index]);
+                    TrackList[index].Display();
+                    DataBaseContext.StoreTrack(TrackList[index]);
+                }
+            }
         }
         //private void ExtractTracks(int calledSongs, int remainder, TracksAudioFeaturesResponse audioFeaturesContainer)
         //{
