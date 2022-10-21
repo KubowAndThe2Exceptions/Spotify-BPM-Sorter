@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spotify BPM Sorter", "Spotify BPM Sorter\Spotify BPM Sorter.csproj", "{423A9659-5FD4-45AF-9B3E-1B72556DF220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify BPM SorterTests", "Spotify BPM SorterTests\Spotify BPM SorterTests.csproj", "{97B09E74-8C7C-4B6A-90BF-A0F39875217E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spotify BPM SorterTests", "Spotify BPM SorterTests\Spotify BPM SorterTests.csproj", "{97B09E74-8C7C-4B6A-90BF-A0F39875217E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify BPM Sorter UI", "Spotify BPM Sorter UI\Spotify BPM Sorter UI.csproj", "{BEFD26D2-2DFC-4B8E-8743-3CE61AA18B00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{97B09E74-8C7C-4B6A-90BF-A0F39875217E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97B09E74-8C7C-4B6A-90BF-A0F39875217E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97B09E74-8C7C-4B6A-90BF-A0F39875217E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEFD26D2-2DFC-4B8E-8743-3CE61AA18B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEFD26D2-2DFC-4B8E-8743-3CE61AA18B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEFD26D2-2DFC-4B8E-8743-3CE61AA18B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEFD26D2-2DFC-4B8E-8743-3CE61AA18B00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
