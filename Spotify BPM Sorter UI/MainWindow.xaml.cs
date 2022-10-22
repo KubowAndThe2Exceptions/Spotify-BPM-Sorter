@@ -24,5 +24,25 @@ namespace Spotify_BPM_Sorter_UI
         {
             InitializeComponent();
         }
+
+        private void btnStart_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEditAllSongs_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEdit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

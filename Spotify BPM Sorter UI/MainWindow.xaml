@@ -5,18 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spotify_BPM_Sorter_UI"
         mc:Ignorable="d"
-        Title="Names" Height="180" Width="260">
+        Title="Spotify BPM Sorter" Height="400" Width="400">
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <Label>Names</Label>
+        <Button x:Name="btnStart" Margin="5,5,5,5" Click="btnStart_Click" Grid.Row="1" MinWidth="70" Width="70" MinHeight="20" MaxHeight="20">Start</Button>
+        <ListBox x:Name="lstNewSongs" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" MinHeight="200" MinWidth="100" Width="150"/>
+        <StackPanel Grid.Column="2" Grid.Row="1" Margin="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" >
+            <Button x:Name="btnEditAllSongs" Margin="5,5,5,5" Click="btnEditAllSongs_Click" >Edit All Songs</Button>
+            <Button x:Name="btnEdit" Margin="5,5,5,5" Click="btnEdit_Click" >Edit</Button>
+            <Button x:Name="btnSave" Margin="5,5,5,5" Click="btnSave_Click" >Save</Button>
+        </StackPanel>
     </Grid>
 </Window>
