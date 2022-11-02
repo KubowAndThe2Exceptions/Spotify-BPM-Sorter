@@ -1,0 +1,23 @@
+﻿<Window x:Class="Spotify_BPM_Sorter_UI.EditAllWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Spotify_BPM_Sorter_UI"
+        mc:Ignorable="d"
+        Title="EditAllWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="lstAllSongs" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" MinHeight="200" Height="300" MinWidth="100" Width="250"/>
+    </Grid>
+</Window>

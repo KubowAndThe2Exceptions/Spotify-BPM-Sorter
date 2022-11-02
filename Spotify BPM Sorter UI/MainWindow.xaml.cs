@@ -32,7 +32,8 @@ namespace Spotify_BPM_Sorter_UI
 
         private void btnEditAllSongs_Click(object sender, RoutedEventArgs e)
         {
-
+            EditAllWindow editAllWindow = new EditAllWindow();
+            editAllWindow.Show();
         }
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
