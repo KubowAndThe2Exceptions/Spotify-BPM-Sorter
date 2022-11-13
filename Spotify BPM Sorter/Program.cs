@@ -4,10 +4,12 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using DotNetEnv;
+using dotenv.net;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using System.Collections.Generic;
+using dotenv.net.Utilities;
+using System.IO;
 
 namespace Spotify_BPM_Sorter
 {
@@ -24,10 +26,13 @@ namespace Spotify_BPM_Sorter
 
         static async Task Main(string[] args)
         {
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string filePath = projectDirectory + @"/.env";
             //Env variables crossed over
-            DotNetEnv.Env.Load(@"C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\.env");
-            ClientId = DotNetEnv.Env.GetString("CLIENT_ID");
-            Secret = DotNetEnv.Env.GetString("CLIENT_SECRET");
+            DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { filePath }));
+            ClientId = EnvReader.GetStringValue("CLIENT_ID");
+            Secret = EnvReader.GetStringValue("CLIENT_SECRET");
 
 
             await Start();

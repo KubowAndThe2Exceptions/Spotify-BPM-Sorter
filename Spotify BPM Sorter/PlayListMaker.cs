@@ -38,16 +38,16 @@ namespace Spotify_BPM_Sorter
         
         private PlayListMaker(SpotifyClient spotify)
         {
-            DotNetEnv.Env.Load(@"C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\.env");
-            string HPlaylist = DotNetEnv.Env.GetString("H_PLAYLIST");
-            string MPlaylist = DotNetEnv.Env.GetString("M_PLAYLIST");
-            string LPlaylist = DotNetEnv.Env.GetString("L_PLAYLIST");
-            TargetPlaylist = DotNetEnv.Env.GetString("TARGET_PLAYLIST");
+            //DotNetEnv.Env.Load(@"C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\.env");
+            //string HPlaylist = DotNetEnv.Env.GetString("H_PLAYLIST");
+            //string MPlaylist = DotNetEnv.Env.GetString("M_PLAYLIST");
+           // string LPlaylist = DotNetEnv.Env.GetString("L_PLAYLIST");
+           // TargetPlaylist = DotNetEnv.Env.GetString("TARGET_PLAYLIST");
 
-            HighTempoList = new TempoRange(HPlaylist);
-            MidTempoList = new TempoRange(MPlaylist);
-            LowTempoList = new TempoRange(LPlaylist);
-            Spotify = spotify;
+           // HighTempoList = new TempoRange(HPlaylist);
+            //MidTempoList = new TempoRange(MPlaylist);
+           // LowTempoList = new TempoRange(LPlaylist);
+            //Spotify = spotify;
 
         }
 
