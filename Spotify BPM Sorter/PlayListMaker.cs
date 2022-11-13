@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using System.IO;
+using dotenv.net;
+using dotenv.net.Utilities;
 
 namespace Spotify_BPM_Sorter
 {
@@ -38,16 +40,20 @@ namespace Spotify_BPM_Sorter
         
         private PlayListMaker(SpotifyClient spotify)
         {
-            //DotNetEnv.Env.Load(@"C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\.env");
-            //string HPlaylist = DotNetEnv.Env.GetString("H_PLAYLIST");
-            //string MPlaylist = DotNetEnv.Env.GetString("M_PLAYLIST");
-           // string LPlaylist = DotNetEnv.Env.GetString("L_PLAYLIST");
-           // TargetPlaylist = DotNetEnv.Env.GetString("TARGET_PLAYLIST");
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string filePath = projectDirectory + @"/.env";
+            DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { filePath }));
+
+            string HPlaylist = EnvReader.GetStringValue("H_PLAYLIST");
+            string MPlaylist = EnvReader.GetStringValue("M_PLAYLIST");
+            string LPlaylist = EnvReader.GetStringValue("L_PLAYLIST");
+            TargetPlaylist = EnvReader.GetStringValue("TARGET_PLAYLIST");
 
            // HighTempoList = new TempoRange(HPlaylist);
             //MidTempoList = new TempoRange(MPlaylist);
            // LowTempoList = new TempoRange(LPlaylist);
-            //Spotify = spotify;
+            Spotify = spotify;
 
         }
 
