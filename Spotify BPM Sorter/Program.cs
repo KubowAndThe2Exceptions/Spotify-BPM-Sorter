@@ -67,7 +67,10 @@ namespace Spotify_BPM_Sorter
                     Scopes.UserReadPrivate, Scopes.UserReadRecentlyPlayed, Scopes.UserTopRead }
             };
 
+            //Currently cannot accept the redirect.  Looks like it'll need a server to run off like before.
+            //TODO: Find out if an embedded server will work, or create and HTTP Listener yourself
             BrowserUtil.Open(request.ToUri());
+            
         }
 
 
