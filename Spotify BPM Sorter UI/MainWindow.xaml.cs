@@ -59,7 +59,12 @@ namespace Spotify_BPM_Sorter_UI
             {
                 CodeChallengeMethod = "S256",
                 CodeChallenge = challenge,
-                Scope = new[] { Scopes.PlaylistReadPrivate, Scopes.PlaylistReadCollaborative }
+                Scope = new List<string> { Scopes.UserReadEmail, Scopes.AppRemoteControl,
+                    Scopes.PlaylistModifyPrivate, Scopes.PlaylistModifyPublic, Scopes.PlaylistReadCollaborative,
+                    Scopes.PlaylistReadPrivate, Scopes.Streaming, Scopes.UgcImageUpload, Scopes.UserFollowModify,
+                    Scopes.UserFollowRead, Scopes.UserLibraryModify, Scopes.UserLibraryRead, Scopes.UserModifyPlaybackState,
+                    Scopes.UserReadCurrentlyPlaying, Scopes.UserReadPlaybackPosition, Scopes.UserReadPlaybackState,
+                    Scopes.UserReadPrivate, Scopes.UserReadRecentlyPlayed, Scopes.UserTopRead }
             };
             
             var uri = loginRequest.ToUri();
