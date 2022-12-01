@@ -25,32 +25,45 @@ namespace Spotify_BPM_Sorter_UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static EmbedIOAuthServer _server;
+        private string _clientId;
         public MainWindow()
         {
             InitializeComponent();
+            
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            string filePath = projectDirectory + @"\Spotify BPM Sorter\.env";
+            
+            //gets Env variables
+            DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { filePath }));
+            _clientId = EnvReader.GetStringValue("CLIENT_ID");
         }
 
         private async void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            string workingDirectory = Environment.CurrentDirectory;
-            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
-            string filePath = projectDirectory + @"\Spotify BPM Sorter\.env";
-
-            //gets Env variables
-            DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { filePath }));
-            var clientId = EnvReader.GetStringValue("CLIENT_ID");
-
             var (verifier, challenge) = PKCEUtil.GenerateCodes(120);
 
-            var loginRequest = new LoginRequest(new Uri("http://localhost:5000/callback"), clientId, LoginRequest.ResponseType.Code)
+            _server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
+            await _server.Start();
+
+            _server.AuthorizationCodeReceived += async (s, response) =>
+            {
+                await _server.Stop();
+                PKCETokenResponse token = await new OAuthClient().RequestToken(
+                  new PKCETokenRequest(_clientId, response.Code, _server.BaseUri, verifier)
+                );
+            };
+
+            var loginRequest = new LoginRequest(new Uri("http://localhost:5000/callback"), _clientId, LoginRequest.ResponseType.Code)
             {
                 CodeChallengeMethod = "S256",
                 CodeChallenge = challenge,
                 Scope = new[] { Scopes.PlaylistReadPrivate, Scopes.PlaylistReadCollaborative }
             };
+            
             var uri = loginRequest.ToUri();
             BrowserUtil.Open(uri);
-
         }
 
         private void btnEditAllSongs_Click(object sender, RoutedEventArgs e)
