@@ -11,7 +11,7 @@ using dotenv.net.Utilities;
 
 namespace Spotify_BPM_Sorter_UI
 {
-    public class PlayListMaker
+    public class SpotifyHandler
     {
         public string TargetPlaylist { get; set; }
         private string _currentUserId { get; set; }
@@ -28,9 +28,9 @@ namespace Spotify_BPM_Sorter_UI
 
         // I'm using a async method for initialization because the initialization
         // tasks cannot be used without an async parent method.
-        public static async Task<PlayListMaker> CreateAsync(SpotifyClient spotify)
+        public static async Task<SpotifyHandler> CreateAsync(SpotifyClient spotify)
         {
-            var playListMaker = new PlayListMaker(spotify);
+            var playListMaker = new SpotifyHandler(spotify);
             await playListMaker.RequestUserIdAsync();
             
             // TODO: Should be moved elsewhere, does not belong in creation.
@@ -38,7 +38,7 @@ namespace Spotify_BPM_Sorter_UI
             return playListMaker;
         }
         
-        private PlayListMaker(SpotifyClient spotify)
+        private SpotifyHandler(SpotifyClient spotify)
         {
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;

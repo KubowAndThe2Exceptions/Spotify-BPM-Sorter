@@ -27,7 +27,7 @@ namespace Spotify_BPM_Sorter_UI
     {
         private static EmbedIOAuthServer _server;
         private string _clientId;
-        public static PlayListMaker PlaylistMaker;
+        public static SpotifyHandler spotifyHandler;
         public MainWindow()
         {
             InitializeComponent();
@@ -56,7 +56,7 @@ namespace Spotify_BPM_Sorter_UI
                 );
 
                 var spotify = new SpotifyClient(token.AccessToken);
-                PlaylistMaker = await PlayListMaker.CreateAsync(spotify);
+                spotifyHandler = await SpotifyHandler.CreateAsync(spotify);
             };
 
             var loginRequest = new LoginRequest(new Uri("http://localhost:5000/callback"), _clientId, LoginRequest.ResponseType.Code)

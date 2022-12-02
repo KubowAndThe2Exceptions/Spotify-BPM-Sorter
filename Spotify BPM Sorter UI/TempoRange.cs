@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Spotify_BPM_Sorter_UI
 {
-    class TempoRange
+    public class TempoRange
     {
         public static List<TempoRange> AllTempos = new List<TempoRange>();
         public List<DbTrack> Tracklist = new List<DbTrack>();
