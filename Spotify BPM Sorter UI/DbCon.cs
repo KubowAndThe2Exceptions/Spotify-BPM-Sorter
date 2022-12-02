@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 
-namespace Spotify_BPM_Sorter
+namespace Spotify_BPM_Sorter_UI
 {
     class DbCon
     {

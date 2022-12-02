@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spotify_BPM_Sorter
+namespace Spotify_BPM_Sorter_UI
 {
     class TempoRange
     {

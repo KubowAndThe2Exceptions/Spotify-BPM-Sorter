@@ -9,9 +9,9 @@ using System.IO;
 using dotenv.net;
 using dotenv.net.Utilities;
 
-namespace Spotify_BPM_Sorter
+namespace Spotify_BPM_Sorter_UI
 {
-    class PlayListMaker
+    public class PlayListMaker
     {
         public string TargetPlaylist { get; set; }
         private string _currentUserId { get; set; }

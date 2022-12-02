@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpotifyAPI.Web;
 
-namespace Spotify_BPM_Sorter
+namespace Spotify_BPM_Sorter_UI
 {
     public class DbTrack
     {
