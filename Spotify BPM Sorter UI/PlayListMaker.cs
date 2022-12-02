@@ -42,7 +42,9 @@ namespace Spotify_BPM_Sorter_UI
         {
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
-            string filePath = projectDirectory + @"/.env";
+            string filePath = projectDirectory + @"\Spotify BPM Sorter\.env";
+
+            //gets Env variables
             DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { filePath }));
 
             string HPlaylist = EnvReader.GetStringValue("H_PLAYLIST");

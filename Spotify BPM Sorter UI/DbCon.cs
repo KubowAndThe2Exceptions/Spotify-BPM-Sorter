@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace Spotify_BPM_Sorter_UI
 {
-    class DbCon
+    public class DbCon
     {
         public string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Users\Amazingg\source\repos\Spotify BPM Sorter\Spotify BPM Sorter\SpotifyDB.mdf"";Integrated Security=True";
 
