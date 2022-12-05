@@ -30,12 +30,15 @@ namespace Spotify_BPM_Sorter_UI
         // tasks cannot be used without an async parent method.
         public static async Task<SpotifyHandler> CreateAsync(SpotifyClient spotify)
         {
-            var playListMaker = new SpotifyHandler(spotify);
-            await playListMaker.RequestUserIdAsync();
+            var spotifyHandler = new SpotifyHandler(spotify);
+            await spotifyHandler.RequestUserIdAsync();
             
             // TODO: Should be moved elsewhere, does not belong in creation.
-            await playListMaker.FillTrackListAsync();
-            return playListMaker;
+            await spotifyHandler.FillTrackListAsync();
+            await spotifyHandler.AddTrackAnalysisInfoAsync();
+            spotifyHandler.DetectTempoErrors();
+            spotifyHandler.SortTempos();
+            return spotifyHandler;
         }
         
         private SpotifyHandler(SpotifyClient spotify)
@@ -106,13 +109,6 @@ namespace Spotify_BPM_Sorter_UI
                 offset = calledSongs - 1;
             }
             Console.WriteLine("Track List Filled. . .");
-            //Completes DbTrack class
-            await AddTrackAnalysisInfoAsync();
-            
-            //Detects problems with tempo and then sorts to complete tracklist
-            DetectTempoErrors();
-            SortTempos();
-
         }
         
         //TODO: Method needs comments
@@ -181,6 +177,7 @@ namespace Spotify_BPM_Sorter_UI
 
         private void DetectTempoErrors()
         {
+            //This prevents it from being sorted into categories, since it doesnt know how to sort a no-tempo song
             //Seeks out unset tempos and removes them from tracklist
             TempoErrors = TrackList.FindAll(t => t.Tempo == 0);
             foreach (var error in TempoErrors)
@@ -195,7 +192,7 @@ namespace Spotify_BPM_Sorter_UI
         
         private void SortTempos()
         {
-            //Sorts dbtracks into tempo.tracklists by their tempo value
+            //Sorts dbtracks into DBTempo.tracklists by their DBTempo value
             foreach (var track in TrackList)
             {
                 if (track.Tempo < 120)
@@ -301,7 +298,7 @@ namespace Spotify_BPM_Sorter_UI
                         extractedStrings.Add(track.Uri);
                     }
 
-                    //Adds list of tracks to tempo playlist
+                    //Adds list of tracks to DBTempo playlist
                     await Spotify.Playlists.AddItems(TempoRange.AllTempos[i].Id, new PlaylistAddItemsRequest(extractedStrings));
                     
                     calledSongs += amountToCall;
@@ -314,13 +311,13 @@ namespace Spotify_BPM_Sorter_UI
         {
             foreach (var spotifyTrack in trackFeatures.AudioFeatures)
             {
-                //References DB for tempo by default.  If the tempo is not set in the DB
-                //or if the track does not exist in the DB, then it uses spotify's provided tempo
+                //References DB for DBTempo by default.  If the DBTempo is not set in the DB
+                //or if the track does not exist in the DB, then it uses spotify's provided DBTempo
                 int index;
                 if (DataBaseContext.TrackExists(spotifyTrack.Id))
                 {
-                    float tempo = DataBaseContext.GetTempo(spotifyTrack.Id);
-                    if (tempo == 0 && spotifyTrack.Tempo > 0)
+                    float DBTempo = DataBaseContext.GetTempo(spotifyTrack.Id);
+                    if (DBTempo == 0 && spotifyTrack.Tempo > 0)
                     {
                         DataBaseContext.SetTempo(spotifyTrack.Tempo, spotifyTrack.Id);
                         index = TrackList.FindIndex(t => t.TrackId == spotifyTrack.Id);
@@ -328,7 +325,7 @@ namespace Spotify_BPM_Sorter_UI
                         DataBaseContext.FixArtists(TrackList[index].Artists, spotifyTrack.Id);
                     }
                     index = TrackList.FindIndex(t => t.TrackId == spotifyTrack.Id);
-                    TrackList[index].Tempo = tempo;
+                    TrackList[index].Tempo = DBTempo;
                     DataBaseContext.FixArtists(TrackList[index].Artists, spotifyTrack.Id);
                 }
                 else
