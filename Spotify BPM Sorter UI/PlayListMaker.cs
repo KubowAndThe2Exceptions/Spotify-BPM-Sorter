@@ -28,14 +28,14 @@ namespace Spotify_BPM_Sorter_UI
 
         // I'm using a async method for initialization because the initialization
         // tasks cannot be used without an async parent method.
+        
+        //TODO: Consider if there is another course of action here, or if this is even necessary
         public static async Task<SpotifyHandler> CreateAsync(SpotifyClient spotify)
         {
             var spotifyHandler = new SpotifyHandler(spotify);
             await spotifyHandler.RequestUserIdAsync();
-            
+            await spotifyHandler.SpotifyGetPlaylistAsync();
             // TODO: Should be moved elsewhere, does not belong in creation.
-            await spotifyHandler.FillTrackListAsync();
-            await spotifyHandler.AddTrackAnalysisInfoAsync();
             spotifyHandler.DetectTempoErrors();
             spotifyHandler.SortTempos();
             return spotifyHandler;
@@ -62,6 +62,11 @@ namespace Spotify_BPM_Sorter_UI
 
         }
 
+        private async Task SpotifyGetPlaylistAsync()
+        {
+            await FillTrackListAsync();
+            await AddTrackAnalysisInfoAsync();
+        }
         private async Task<int> GetPlaylistTotalAsync(string playlistId)
         {
             //new playlistrequest only asking for the total num of songs
@@ -89,6 +94,7 @@ namespace Spotify_BPM_Sorter_UI
             {
                 var tracks = new List<DbTrack>();
 
+                //TODO: Convert to method that takes a SpotifyClinet and a String (for TargetPlaylist)
                 //Calls api and converts from FullTrack to DbTrack
                 var playlist = await Spotify.Playlists.GetItems(TargetPlaylist, new PlaylistGetItemsRequest { Offset = offset });
                 foreach (var item in playlist.Items)
@@ -132,25 +138,21 @@ namespace Spotify_BPM_Sorter_UI
             {
                 for (var i = 0; i < totalCalls; i++)
                 {
+                    List<string> trackIdStrings = new List<string>();
                     if (i == lastCall && remainder > 0)
                     {
-                        // Can be turned into method
-                        listToExtract = TrackList.GetRange(calledSongs, remainder);
-                        foreach (var track in listToExtract)
-                        {
-                            extractedStrings.Add(track.TrackId);
-                        }
+                        trackIdStrings = ExtractRangeOfTrackIds(TrackList, calledSongs, remainder);
+                        //May cause errors with GetSeveralAudioFeatures call
+                        extractedStrings.AddRange(trackIdStrings);
+                        
                         extractedAudioFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
                         AudioFeaturesArray[i] = extractedAudioFeatures;
                         calledSongs += remainder;
                         continue;
                     }
-                    // Can be turned into method
-                    listToExtract = TrackList.GetRange(calledSongs, 100);
-                    foreach (var track in listToExtract)
-                    {
-                        extractedStrings.Add(track.TrackId);
-                    }
+                    trackIdStrings = ExtractRangeOfTrackIds(TrackList, calledSongs, 100);
+                    //May cause errors with GetSeveralAudioFeatures call
+                    extractedStrings.AddRange(trackIdStrings);
 
                     extractedAudioFeatures = await Spotify.Tracks.GetSeveralAudioFeatures(new TracksAudioFeaturesRequest(extractedStrings));
                     AudioFeaturesArray[i] = extractedAudioFeatures;
@@ -175,6 +177,16 @@ namespace Spotify_BPM_Sorter_UI
                 // StoreTemposAsync: Use separate method to shuffle through array and correct tempos
         }
 
+        private List<string> ExtractRangeOfTrackIds(List<DbTrack> tracklist, int index, int range)
+        {
+            List<string> extractedStrings = new List<string>();
+            var listToExtract = tracklist.GetRange(index, range);
+            foreach (var track in listToExtract)
+            {
+                extractedStrings.Add(track.TrackId);
+            }
+            return extractedStrings;
+        }
         private void DetectTempoErrors()
         {
             //This prevents it from being sorted into categories, since it doesnt know how to sort a no-tempo song
